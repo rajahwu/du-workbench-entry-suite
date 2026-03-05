@@ -1,0 +1,17 @@
+{
+  "name": "@bell/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "types": "index.ts",
+  "description": "Bell Phase Engine — a portable state machine protocol. Action → Bell → Wall → Seal → Transfer | Stay.",
+  "keywords": ["state-machine", "phase", "transition", "engine"],
+  "files": [
+    "index.ts",
+    "manager.ts",
+    "types/",
+    "seals/",
+    "walls/"
+  ]
+}
