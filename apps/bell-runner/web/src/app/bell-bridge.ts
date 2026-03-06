@@ -10,7 +10,7 @@
 // =============================================================================
 
 import { createEngine, type BellEngine, type TransitionResult, type BellSource } from '../../../engine';
-import { createDudaelConfig, type DudaelState } from '../../../engine/phases/dudael';
+import { createDudaelConfig, type DudaelState } from '../../../engine/config';
 
 // These would be your actual Redux imports
 // import type { AppDispatch, RootState } from './store';
