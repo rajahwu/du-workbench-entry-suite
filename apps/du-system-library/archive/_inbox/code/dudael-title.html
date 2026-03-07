@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>DUDAEL // THE DROP</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg:      #0D0E12;
+    --surface: #13141A;
+    --border:  #1E2028;
+    --dim:     #2A2D38;
+    --muted:   #4A4D58;
+    --text:    #8B8FA0;
+    --light:   #D4A843;
+    --dark:    #7B4FA2;
+    --neutral: #8BA0B5;
+    --danger:  #C04050;
+    --success: #6B8F71;
+    --amber:   #B8863B;
+    --gold:    #F5D47A;
+    --blood:   #3a0b0b;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    height: 100dvh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── FRAME BARS ── */
+  .frame-bar {
+    position: fixed;
+    z-index: 10;
+    background: rgba(19,20,26,0.72);
+    backdrop-filter: blur(2px);
+  }
+  .frame-bar.top    { top: 0; left: 0; right: 0; height: 36px; border-bottom: 1px solid var(--border); }
+  .frame-bar.bottom { bottom: 0; left: 0; right: 0; height: 36px; border-top: 1px solid var(--border); }
+  .frame-bar.left   { top: 36px; bottom: 36px; left: 0; width: 28px; border-right: 1px solid var(--border); }
+  .frame-bar.right  { top: 36px; bottom: 36px; right: 0; width: 28px; border-left: 1px solid var(--border); }
+
+  /* letters in frame bars */
+  .bar-text {
+    position: absolute;
+    font-size: 7px;
+    letter-spacing: 0.18em;
+    color: var(--dim);
+    text-transform: uppercase;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .bar-text.top-left  { left: 10px; top: 50%; transform: translateY(-50%); }
+  .bar-text.top-right { right: 10px; top: 50%; transform: translateY(-50%); }
+  .bar-text.bottom-center { left: 50%; bottom: 50%; transform: translate(-50%, 50%); }
+
+  /* exit dot — top right inside frame */
+  .exit-dot {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--danger);
+    opacity: 0.7;
+    cursor: pointer;
+    z-index: 20;
+    border: none;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+  .exit-dot:hover { opacity: 1; transform: scale(1.15); }
+
+  /* ── BACKGROUND ── */
+  .bg-gradient {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, #1a1820 0%, #0D0E12 65%);
+    z-index: 0;
+  }
+
+  /* animated ash strokes */
+  .ash-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    animation: ashReveal 1.8s ease-out 0.4s forwards;
+  }
+  @keyframes ashReveal { to { opacity: 1; } }
+
+  .ash-stroke {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--dim) 30%, var(--muted) 50%, var(--dim) 70%, transparent);
+    top: 50%;
+    left: 18%;
+    right: 18%;
+    opacity: 0.35;
+  }
+
+  /* spark seam animation */
+  .seam-top, .seam-bottom {
+    position: fixed;
+    left: 28px;
+    right: 28px;
+    height: 1px;
+    z-index: 11;
+    overflow: hidden;
+  }
+  .seam-top    { top: 36px; }
+  .seam-bottom { bottom: 36px; }
+
+  .seam-spark {
+    position: absolute;
+    top: 0;
+    left: -60px;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--amber), var(--gold), white);
+    animation: seamRun 2.2s ease-in-out 0.2s forwards;
+    opacity: 0;
+  }
+  @keyframes seamRun {
+    0%   { left: -60px; opacity: 0; }
+    5%   { opacity: 1; }
+    100% { left: calc(100% + 60px); opacity: 0; }
+  }
+  .seam-bottom .seam-spark {
+    animation-delay: 0.5s;
+    animation-direction: reverse;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .title-screen {
+    position: relative;
+    z-index: 5;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 28px;
+    gap: 0;
+  }
+
+  /* ── IDENTITY BLOCK ── */
+  .identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: riseIn 0.9s cubic-bezier(0.22,1,0.36,1) 0.8s forwards;
+  }
+
+  .identity-super {
+    font-size: 8px;
+    letter-spacing: 0.35em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .identity-name {
+    font-family: 'Crimson Pro', serif;
+    font-size: clamp(42px, 9vw, 72px);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    line-height: 1;
+    /* subtle gradient from text → amber */
+    background: linear-gradient(160deg, #a8acc0 0%, #8B8FA0 40%, var(--amber) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .identity-sub {
+    font-size: 9px;
+    letter-spacing: 0.28em;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .identity-divider {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--amber), transparent);
+    margin-top: 10px;
+    opacity: 0.5;
+  }
+
+  /* ── MENU ── */
+  .menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    max-width: 260px;
+    opacity: 0;
+    animation: riseIn 0.8s cubic-bezier(0.22,1,0.36,1) 1.2s forwards;
+  }
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 16px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    width: 100%;
+    transition: color 0.18s, border-color 0.18s, background 0.18s, padding-left 0.18s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .menu-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--item-accent, var(--amber));
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 0.18s cubic-bezier(0.22,1,0.36,1);
+  }
+
+  .menu-item:hover {
+    color: var(--item-color, var(--text));
+    border-color: var(--border);
+    background: var(--surface);
+    padding-left: 22px;
+  }
+  .menu-item:hover::before { transform: scaleY(1); }
+  .menu-item:active { transform: scale(0.99); }
+
+  /* disabled / locked state */
+  .menu-item.locked {
+    opacity: 0.28;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .menu-item.locked .menu-icon { color: var(--dim); }
+
+  .menu-icon {
+    font-size: 13px;
+    width: 16px;
+    text-align: center;
+    flex-shrink: 0;
+    color: var(--item-accent, var(--amber));
+    transition: color 0.18s;
+  }
+
+  .menu-label { flex: 1; }
+
+  .menu-tag {
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    border: 1px solid var(--border);
+    padding: 2px 5px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* item-specific accents */
+  .item-start  { --item-accent: var(--amber); --item-color: var(--light); }
+  .item-continue { --item-accent: var(--success); --item-color: var(--success); }
+  .item-settings { --item-accent: var(--neutral); --item-color: var(--text); }
+  .item-exit   { --item-accent: var(--danger); --item-color: var(--danger); }
+
+  /* menu divider */
+  .menu-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 6px 0;
+    opacity: 0.5;
+  }
+
+  /* ── SAVE SLOT INDICATOR ── */
+  .save-slot {
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    color: var(--dim);
+    text-align: center;
+    margin-top: 24px;
+    opacity: 0;
+    animation: riseIn 0.7s ease 1.6s forwards;
+  }
+  .save-slot .slot-value {
+    color: var(--success);
+  }
+  .save-slot.no-save .slot-value {
+    color: var(--dim);
+  }
+
+  /* ── VERSION LINE ── */
+  .version-line {
+    position: fixed;
+    bottom: 44px;
+    right: 36px;
+    font-size: 7px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    z-index: 6;
+    opacity: 0;
+    animation: fadeIn 0.6s ease 2s forwards;
+  }
+
+  /* ── SETTINGS OVERLAY ── */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 36px 28px;
+    background: rgba(13,14,18,0.92);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .overlay-panel {
+    width: 100%;
+    max-width: 300px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    transform: translateY(8px);
+    transition: transform 0.2s cubic-bezier(0.22,1,0.36,1);
+  }
+  .overlay.open .overlay-panel { transform: translateY(0); }
+
+  .overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .overlay-title {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .overlay-close {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    transition: color 0.15s;
+  }
+  .overlay-close:hover { color: var(--danger); }
+
+  .overlay-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .setting-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .setting-sub {
+    font-size: 7px;
+    letter-spacing: 0.1em;
+    color: var(--dim);
+    margin-top: 2px;
+  }
+
+  /* toggle */
+  .toggle {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute;
+    inset: 0;
+    background: var(--dim);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle input:checked + .toggle-track { background: var(--amber); }
+  .toggle-track::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    left: 3px; top: 3px;
+    background: var(--bg);
+    border-radius: 50%;
+    transition: transform 0.2s;
+  }
+  .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
+
+  /* select */
+  .setting-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 4px 8px;
+    cursor: pointer;
+    appearance: none;
+    outline: none;
+  }
+  .setting-select:focus { border-color: var(--amber); }
+
+  .setting-divider {
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── EXIT CONFIRM OVERLAY ── */
+  .exit-text {
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .exit-text em { color: var(--danger); font-style: italic; }
+  .exit-actions { display: flex; gap: 8px; justify-content: center; }
+  .btn-sm {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted);
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .btn-sm:hover { color: var(--text); border-color: var(--muted); background: var(--surface); }
+  .btn-sm.danger { color: var(--danger); border-color: var(--danger); }
+  .btn-sm.danger:hover { background: rgba(192,64,80,0.1); }
+
+  /* ── KEYFRAMES ── */
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* pulse on start button icon */
+  .item-start:hover .menu-icon {
+    animation: iconPulse 0.8s ease infinite alternate;
+  }
+  @keyframes iconPulse {
+    from { opacity: 0.7; }
+    to   { opacity: 1; text-shadow: 0 0 8px var(--amber); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── FRAME ── -->
+<div class="frame-bar top">
+  <span class="bar-text top-left">DUDAEL // 01_TITLE</span>
+  <span class="bar-text top-right" id="topBarRight">V-01 // INITIAL RELEASE</span>
+</div>
+<div class="frame-bar bottom">
+  <span class="bar-text bottom-center" id="bottomBarText">NAME CARVED INTO WALLS</span>
+</div>
+<div class="frame-bar left"></div>
+<div class="frame-bar right"></div>
+
+<!-- exit dot -->
+<button class="exit-dot" onclick="openExit()" title="Exit"></button>
+
+<!-- seam sparks -->
+<div class="seam-top"><div class="seam-spark"></div></div>
+<div class="seam-bottom"><div class="seam-spark"></div></div>
+
+<!-- background -->
+<div class="bg-gradient"></div>
+<div class="ash-layer">
+  <div class="ash-stroke"></div>
+</div>
+
+<!-- version -->
+<div class="version-line" id="versionLine">V-01 // BUILD 0301</div>
+
+<!-- ── TITLE SCREEN ── -->
+<div class="title-screen">
+
+  <!-- identity block -->
+  <div class="identity">
+    <div class="identity-super">Forensic Archive</div>
+    <div class="identity-name">Dudael</div>
+    <div class="identity-sub">The Drop</div>
+    <div class="identity-divider"></div>
+  </div>
+
+  <!-- menu -->
+  <nav class="menu" role="menu">
+
+    <!-- START — always available -->
+    <button class="menu-item item-start" onclick="handleStart()" role="menuitem">
+      <span class="menu-icon">◈</span>
+      <span class="menu-label">Begin Descent</span>
+    </button>
+
+    <!-- CONTINUE — conditional on save data -->
+    <button class="menu-item item-continue locked" id="continueBtn" onclick="handleContinue()" role="menuitem">
+      <span class="menu-icon">⊞</span>
+      <span class="menu-label">Continue</span>
+      <span class="menu-tag" id="continueTag">No Save</span>
+    </button>
+
+    <div class="menu-divider"></div>
+
+    <!-- SETTINGS -->
+    <button class="menu-item item-settings" onclick="openSettings()" role="menuitem">
+      <span class="menu-icon">⊟</span>
+      <span class="menu-label">Settings</span>
+    </button>
+
+    <!-- EXIT -->
+    <button class="menu-item item-exit" onclick="openExit()" role="menuitem">
+      <span class="menu-icon">⊘</span>
+      <span class="menu-label">Exit</span>
+    </button>
+
+  </nav>
+
+  <!-- save slot indicator -->
+  <div class="save-slot no-save" id="saveSlotDisplay">
+    <span id="saveSlotText">— no record found —</span>
+  </div>
+
+</div>
+
+<!-- ── SETTINGS OVERLAY ── -->
+<div class="overlay" id="settingsOverlay">
+  <div class="overlay-panel">
+    <div class="overlay-header">
+      <span class="overlay-title">Settings</span>
+      <button class="overlay-close" onclick="closeSettings()">[ Close ]</button>
+    </div>
+    <div class="overlay-body">
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Sound</div>
+          <div class="setting-sub">Bell chime + ambient</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="soundToggle" checked onchange="saveSetting('sound', this.checked)">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Music</div>
+          <div class="setting-sub">Architecture Machine</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="musicToggle" checked onchange="saveSetting('music', this.checked)">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+
+      <div class="setting-divider"></div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Reduce Motion</div>
+          <div class="setting-sub">Disables spark + animations</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="motionToggle" onchange="saveSetting('reduceMotion', this.checked)">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Difficulty</div>
+          <div class="setting-sub">Affects timer speed</div>
+        </div>
+        <select class="setting-select" id="diffSelect" onchange="saveSetting('difficulty', this.value)">
+          <option value="standard">Standard</option>
+          <option value="punishing">Punishing</option>
+          <option value="witness">Witness</option>
+        </select>
+      </div>
+
+      <div class="setting-divider"></div>
+
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">Clear Save</div>
+          <div class="setting-sub">Wipe run record</div>
+        </div>
+        <button class="btn-sm danger" onclick="clearSave()">Erase</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── EXIT CONFIRM OVERLAY ── -->
+<div class="overlay" id="exitOverlay">
+  <div class="overlay-panel">
+    <div class="overlay-header">
+      <span class="overlay-title">Exit</span>
+      <button class="overlay-close" onclick="closeExit()">[ Cancel ]</button>
+    </div>
+    <div class="overlay-body">
+      <div class="exit-text">
+        The record remains.<br>
+        <em>The depth will wait for you.</em>
+      </div>
+      <div class="exit-actions">
+        <button class="btn-sm" onclick="closeExit()">Stay</button>
+        <button class="btn-sm danger" onclick="doExit()">Leave</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── SAVE DATA ──────────────────────────────────────────
+
+  const SAVE_KEY = 'dudael:save';
+  const SETTINGS_KEY = 'dudael:settings';
+
+  function loadSave() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  }
+
+  function loadSettings() {
+    try {
+      const raw = localStorage.getItem(SETTINGS_KEY);
+      return raw ? JSON.parse(raw) : { sound: true, music: true, reduceMotion: false, difficulty: 'standard' };
+    } catch { return { sound: true, music: true, reduceMotion: false, difficulty: 'standard' }; }
+  }
+
+  function saveSetting(key, value) {
+    const s = loadSettings();
+    s[key] = value;
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch {}
+  }
+
+  function clearSave() {
+    try { localStorage.removeItem(SAVE_KEY); } catch {}
+    initUI();
+    closeSettings();
+  }
+
+  // ── INIT ──────────────────────────────────────────────
+
+  function initUI() {
+    const save = loadSave();
+    const settings = loadSettings();
+    const continueBtn = document.getElementById('continueBtn');
+    const continueTag = document.getElementById('continueTag');
+    const saveSlot    = document.getElementById('saveSlotDisplay');
+    const saveText    = document.getElementById('saveSlotText');
+
+    // Continue button
+    if (save && save.depth) {
+      continueBtn.classList.remove('locked');
+      continueTag.textContent = `Depth ${save.depth}`;
+      saveSlot.classList.remove('no-save');
+      const vessel = save.vessel || 'Unknown';
+      const depth  = save.depth || 0;
+      const pts    = save.points || 0;
+      saveText.innerHTML =
+        `<span class="slot-value">${vessel}</span> // Depth ${depth} // ${pts} pts`;
+    } else {
+      continueBtn.classList.add('locked');
+      continueTag.textContent = 'No Save';
+      saveSlot.classList.add('no-save');
+      saveText.textContent = '— no record found —';
+    }
+
+    // Settings toggles
+    document.getElementById('soundToggle').checked  = settings.sound;
+    document.getElementById('musicToggle').checked  = settings.music;
+    document.getElementById('motionToggle').checked = settings.reduceMotion;
+    document.getElementById('diffSelect').value     = settings.difficulty || 'standard';
+
+    // Reduce motion
+    if (settings.reduceMotion) {
+      document.querySelectorAll('.seam-spark, .ash-layer').forEach(el => {
+        el.style.animation = 'none';
+        el.style.opacity = '0.5';
+      });
+    }
+  }
+
+  // ── NAVIGATION ────────────────────────────────────────
+
+  function handleStart() {
+    // Hook: fire dudael:exchange or navigate to 02_select
+    // In standalone: replace with goTo('select')
+    console.log('[title] Begin Descent — new run');
+    flashTransition(() => {
+      // goTo('select');  ← wire to your router
+      console.log('[title] → 02_select (new run)');
+    });
+  }
+
+  function handleContinue() {
+    const save = loadSave();
+    if (!save) return;
+    console.log('[title] Continue — restoring run', save);
+    flashTransition(() => {
+      // goTo('staging');  ← restore to staging or last phase
+      console.log('[title] → 03_staging (restored)');
+    });
+  }
+
+  // ── SETTINGS ──────────────────────────────────────────
+
+  function openSettings()  { document.getElementById('settingsOverlay').classList.add('open'); }
+  function closeSettings() { document.getElementById('settingsOverlay').classList.remove('open'); }
+
+  // ── EXIT ──────────────────────────────────────────────
+
+  function openExit()  { document.getElementById('exitOverlay').classList.add('open'); }
+  function closeExit() { document.getElementById('exitOverlay').classList.remove('open'); }
+
+  function doExit() {
+    // In Electron or PWA: window.close()
+    // In web prototype: return to a landing page or reload
+    flashTransition(() => {
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity 0.5s';
+      setTimeout(() => {
+        console.log('[title] Exit confirmed.');
+        // window.close();
+      }, 500);
+    });
+  }
+
+  // ── TRANSITION FLASH ──────────────────────────────────
+
+  function flashTransition(cb) {
+    const flash = document.createElement('div');
+    flash.style.cssText = `
+      position:fixed;inset:0;z-index:999;
+      background:var(--bg);opacity:0;
+      transition:opacity 0.25s;pointer-events:all;
+    `;
+    document.body.appendChild(flash);
+    requestAnimationFrame(() => {
+      flash.style.opacity = '1';
+      setTimeout(() => { cb(); flash.remove(); }, 280);
+    });
+  }
+
+  // ── BOOT ──────────────────────────────────────────────
+
+  initUI();
+
+  // DEV: inject a fake save to test the Continue path
+  // localStorage.setItem('dudael:save', JSON.stringify({ vessel:'Seraph', depth:3, points:24 }));
+  // initUI();
+</script>
+</body>
+</html>

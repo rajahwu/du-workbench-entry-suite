@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cots &amp; Robots — Arena Topology</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Fredoka:wght@400;600;700&display=swap');
+
+  :root {
+    --void: #0a0a0f;
+    --grid-dark: #12121a;
+    --neon-cyan: #00f0ff;
+    --neon-magenta: #ff00aa;
+    --neon-gold: #ffd700;
+    --neon-green: #39ff14;
+    --candy-pink: #ff69b4;
+    --candy-blue: #00d4ff;
+    --candy-yellow: #fff44f;
+    --candy-orange: #ff6b35;
+    --candy-purple: #bf5fff;
+    --light-magic: #e8f0ff;
+    --dark-magic: #1a0a2e;
+    --taunt-red: #ff2244;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--void);
+    color: #e0e0e0;
+    font-family: 'Orbitron', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      transparent 0px, transparent 2px,
+      rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .header {
+    text-align: center;
+    padding: 3rem 1rem 1rem;
+  }
+
+  .header h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.2rem, 4vw, 2.2rem);
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px var(--neon-cyan), 0 0 60px rgba(0,240,255,0.3);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .header .subtitle {
+    font-size: 0.7rem;
+    color: #556;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+
+  .arena-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+
+  .arena-card {
+    background: var(--grid-dark);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .arena-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  }
+
+  .arena-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .arena-card.square::before { background: var(--neon-cyan); box-shadow: 0 0 15px var(--neon-cyan); }
+  .arena-card.triangle::before { background: var(--neon-magenta); box-shadow: 0 0 15px var(--neon-magenta); }
+  .arena-card.column::before { background: var(--neon-gold); box-shadow: 0 0 15px var(--neon-gold); }
+  .arena-card.candy::before { background: linear-gradient(90deg, var(--candy-pink), var(--candy-blue), var(--candy-yellow), var(--candy-purple), var(--candy-pink)); box-shadow: 0 0 20px var(--candy-pink); animation: candy-border 3s linear infinite; background-size: 200% 100%; }
+
+  @keyframes candy-border { 0%{background-position:0% 0} 100%{background-position:200% 0} }
+
+  .arena-label {
+    padding: 1.2rem 1.5rem 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .arena-label h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .square .arena-label h2 { color: var(--neon-cyan); }
+  .triangle .arena-label h2 { color: var(--neon-magenta); }
+  .column .arena-label h2 { color: var(--neon-gold); }
+  .candy .arena-label h2 { 
+    font-family: 'Fredoka', sans-serif;
+    color: var(--candy-pink);
+    font-size: 1rem;
+  }
+
+  .arena-label .mode {
+    font-size: 0.55rem;
+    color: #667;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .arena-viewport {
+    position: relative;
+    height: 340px;
+    margin: 0.5rem 1rem;
+    overflow: hidden;
+  }
+
+  /* ==================== GRID CANVAS ==================== */
+  .grid-floor {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ==================== SQUARE ARENA ==================== */
+  .square-grid {
+    width: 260px;
+    height: 260px;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    gap: 2px;
+    position: relative;
+  }
+
+  .square-grid .cell {
+    background: rgba(0, 240, 255, 0.03);
+    border: 1px solid rgba(0, 240, 255, 0.08);
+    transition: background 0.2s;
+  }
+
+  .square-grid .cell:hover {
+    background: rgba(0, 240, 255, 0.12);
+  }
+
+  .corner-node {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    z-index: 10;
+    animation: pulse-node 2s ease-in-out infinite;
+  }
+
+  .corner-node.light {
+    background: var(--light-magic);
+    box-shadow: 0 0 12px rgba(232,240,255,0.8), 0 0 30px rgba(232,240,255,0.3);
+  }
+
+  .corner-node.dark {
+    background: #6a0dad;
+    box-shadow: 0 0 12px rgba(106,13,173,0.8), 0 0 30px rgba(106,13,173,0.3);
+  }
+
+  .corner-node.tl { top: -11px; left: -11px; animation-delay: 0s; }
+  .corner-node.tr { top: -11px; right: -11px; animation-delay: 0.5s; }
+  .corner-node.bl { bottom: -11px; left: -11px; animation-delay: 1s; }
+  .corner-node.br { bottom: -11px; right: -11px; animation-delay: 1.5s; }
+
+  @keyframes pulse-node {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+  }
+
+  /* Center label */
+  .arena-center-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.45rem;
+    color: rgba(255,255,255,0.15);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* ==================== TRIANGLE ARENA ==================== */
+  .triangle-container {
+    position: relative;
+    width: 280px;
+    height: 260px;
+  }
+
+  .triangle-shape {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 140px solid transparent;
+    border-right: 140px solid transparent;
+    border-bottom: 242px solid rgba(255, 0, 170, 0.04);
+    top: 10px;
+    left: 0;
+  }
+
+  .triangle-shape::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 136px solid transparent;
+    border-right: 136px solid transparent;
+    border-bottom: 236px solid var(--grid-dark);
+    top: 4px;
+    left: -136px;
+  }
+
+  .tri-edge {
+    position: absolute;
+    height: 1px;
+    background: rgba(255, 0, 170, 0.2);
+    transform-origin: left center;
+  }
+
+  .tri-node {
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    z-index: 10;
+    animation: pulse-node 2.5s ease-in-out infinite;
+  }
+
+  .tri-node.apex {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ff2244;
+    box-shadow: 0 0 15px rgba(255,34,68,0.8), 0 0 40px rgba(255,34,68,0.3);
+    width: 30px;
+    height: 30px;
+  }
+
+  .tri-node.base-l {
+    bottom: 0;
+    left: 0;
+    background: var(--light-magic);
+    box-shadow: 0 0 12px rgba(232,240,255,0.8);
+    animation-delay: 0.8s;
+  }
+
+  .tri-node.base-r {
+    bottom: 0;
+    right: 0;
+    background: var(--light-magic);
+    box-shadow: 0 0 12px rgba(232,240,255,0.8);
+    animation-delay: 1.6s;
+  }
+
+  .tri-lines {
+    position: absolute;
+    inset: 0;
+  }
+
+  .tri-lines svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .tri-lines line {
+    stroke: rgba(255, 0, 170, 0.15);
+    stroke-width: 1;
+  }
+
+  .juggernaut-label {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.35rem;
+    color: rgba(255,34,68,0.5);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  /* ==================== COLUMN ARENA ==================== */
+  .column-container {
+    position: relative;
+    width: 60px;
+    height: 280px;
+  }
+
+  .column-track {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, var(--neon-gold), rgba(255,215,0,0.1), var(--neon-gold));
+  }
+
+  .column-rungs {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .column-rung {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 215, 0, 0.1);
+  }
+
+  .column-node {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    z-index: 10;
+    animation: pulse-node 2s ease-in-out infinite;
+  }
+
+  .column-node.top-node {
+    top: 0;
+    background: var(--light-magic);
+    box-shadow: 0 0 12px rgba(232,240,255,0.8);
+  }
+
+  .column-node.bottom-node {
+    bottom: 0;
+    background: #6a0dad;
+    box-shadow: 0 0 12px rgba(106,13,173,0.8);
+    animation-delay: 1s;
+  }
+
+  .duel-clash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: var(--neon-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 20px var(--neon-gold);
+    animation: clash-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes clash-pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(2.5); opacity: 1; }
+  }
+
+  /* ==================== CANDY TRAPDOOR ==================== */
+  .candy-arena {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* The "serious" Dudael overlay that cracks open */
+  .dudael-overlay {
+    position: absolute;
+    inset: 0;
+    background: 
+      repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.02) 20px, rgba(255,255,255,0.02) 21px),
+      repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(255,255,255,0.02) 20px, rgba(255,255,255,0.02) 21px),
+      linear-gradient(135deg, #0a0a12, #12081e);
+    z-index: 5;
+    animation: crack-open 6s ease-in-out infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  @keyframes crack-open {
+    0%, 20% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; }
+    40%, 70% { clip-path: polygon(0 0, 48% 0, 45% 100%, 0 100%); opacity: 0.8; }
+    45%, 65% { clip-path: polygon(52% 0, 100% 0, 100% 100%, 55% 100%); opacity: 0; }
+    85%, 100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); opacity: 1; }
+  }
+
+  .dudael-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.2em;
+    z-index: 6;
+    animation: dudael-fade 6s ease-in-out infinite;
+  }
+
+  @keyframes dudael-fade {
+    0%, 20% { opacity: 1; }
+    35%, 75% { opacity: 0; }
+    90%, 100% { opacity: 1; }
+  }
+
+  /* The candy chaos underneath */
+  .candy-floor {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1a0020, #0d001a, #001020);
+    z-index: 1;
+  }
+
+  .candy-grid-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 2px;
+    padding: 10px;
+    z-index: 2;
+  }
+
+  .candy-cell {
+    border-radius: 3px;
+    transition: all 0.3s;
+    animation: candy-pop var(--pop-dur, 2s) ease-in-out infinite;
+    animation-delay: var(--pop-delay, 0s);
+    opacity: 0.6;
+  }
+
+  @keyframes candy-pop {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.9; }
+  }
+
+  /* Floating kittens */
+  .kitten {
+    position: absolute;
+    font-size: 1.4rem;
+    z-index: 3;
+    animation: kitten-bounce 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(255,105,180,0.5));
+  }
+
+  @keyframes kitten-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-15px) rotate(-5deg); }
+    75% { transform: translateY(5px) rotate(5deg); }
+  }
+
+  /* Flying candy */
+  .candy-piece {
+    position: absolute;
+    font-size: 1rem;
+    z-index: 3;
+    animation: candy-float 4s ease-in-out infinite;
+  }
+
+  @keyframes candy-float {
+    0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    33% { transform: translateY(-20px) translateX(10px) rotate(120deg); }
+    66% { transform: translateY(10px) translateX(-10px) rotate(240deg); }
+  }
+
+  /* System taunt */
+  .system-taunt {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.38rem;
+    text-align: center;
+    line-height: 1.8;
+    white-space: nowrap;
+    animation: taunt-cycle 6s ease-in-out infinite;
+  }
+
+  .taunt-serious {
+    color: rgba(255,255,255,0.15);
+  }
+
+  .taunt-candy {
+    color: var(--candy-pink);
+    text-shadow: 0 0 10px var(--candy-pink);
+  }
+
+  @keyframes taunt-cycle {
+    0%, 20% { opacity: 0; }
+    35% { opacity: 1; }
+    70% { opacity: 1; }
+    85%, 100% { opacity: 0; }
+  }
+
+  /* ==================== INFO STRIP ==================== */
+  .arena-info {
+    padding: 0.8rem 1.5rem 1.2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .info-chip {
+    font-size: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #778;
+  }
+
+  .square .info-chip { border-color: rgba(0,240,255,0.15); color: rgba(0,240,255,0.6); }
+  .triangle .info-chip { border-color: rgba(255,0,170,0.15); color: rgba(255,0,170,0.6); }
+  .column .info-chip { border-color: rgba(255,215,0,0.15); color: rgba(255,215,0,0.6); }
+  .candy .info-chip { 
+    border-color: rgba(255,105,180,0.2); 
+    color: rgba(255,105,180,0.7);
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 600;
+  }
+
+  /* ==================== RESPONSIVE ==================== */
+  @media (max-width: 760px) {
+    .arena-grid {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+      gap: 1.5rem;
+    }
+    .arena-viewport { height: 300px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>COTS &amp; ROBOTS</h1>
+  <div class="subtitle">Arena Topology &mdash; The Candy Trapdoor</div>
+</div>
+
+<div class="arena-grid">
+
+  <!-- ===== SQUARE: 4-PLAYER BRAWL ===== -->
+  <div class="arena-card square">
+    <div class="arena-label">
+      <h2>SQUARE</h2>
+      <span class="mode">4-Player Brawl</span>
+    </div>
+    <div class="arena-viewport">
+      <div class="grid-floor">
+        <div class="square-grid" id="squareGrid">
+          <div class="corner-node light tl"></div>
+          <div class="corner-node light tr"></div>
+          <div class="corner-node dark bl"></div>
+          <div class="corner-node dark br"></div>
+          <div class="arena-center-label">2v2 / FREE FOR ALL</div>
+        </div>
+      </div>
+    </div>
+    <div class="arena-info">
+      <span class="info-chip">8×8 Grid</span>
+      <span class="info-chip">2 Light / 2 Dark</span>
+      <span class="info-chip">Max Scatter</span>
+    </div>
+  </div>
+
+  <!-- ===== TRIANGLE: ASYMMETRIC ===== -->
+  <div class="arena-card triangle">
+    <div class="arena-label">
+      <h2>TRIANGLE</h2>
+      <span class="mode">Asymmetric 1v2</span>
+    </div>
+    <div class="arena-viewport">
+      <div class="grid-floor">
+        <div class="triangle-container">
+          <div class="tri-lines">
+            <svg viewBox="0 0 280 260" fill="none">
+              <line x1="140" y1="13" x2="13" y2="247" />
+              <line x1="140" y1="13" x2="267" y2="247" />
+              <line x1="13" y1="247" x2="267" y2="247" />
+              <!-- Internal grid lines -->
+              <line x1="77" y1="130" x2="203" y2="130" stroke-opacity="0.08" />
+              <line x1="108" y1="65" x2="172" y2="65" stroke-opacity="0.05" />
+              <line x1="46" y1="195" x2="234" y2="195" stroke-opacity="0.08" />
+              <line x1="140" y1="13" x2="140" y2="247" stroke-opacity="0.05" />
+            </svg>
+          </div>
+          <div class="tri-node apex"></div>
+          <div class="tri-node base-l"></div>
+          <div class="tri-node base-r"></div>
+          <div class="juggernaut-label">JUGGERNAUT</div>
+          <div class="arena-center-label" style="top:65%; color:rgba(255,0,170,0.12);">STANDOFF ZONE</div>
+        </div>
+      </div>
+    </div>
+    <div class="arena-info">
+      <span class="info-chip">3 Nodes</span>
+      <span class="info-chip">1 Dark Crusher</span>
+      <span class="info-chip">2 Light Saviors</span>
+    </div>
+  </div>
+
+  <!-- ===== COLUMN: DUEL ===== -->
+  <div class="arena-card column">
+    <div class="arena-label">
+      <h2>COLUMN</h2>
+      <span class="mode">1v1 Duel</span>
+    </div>
+    <div class="arena-viewport">
+      <div class="grid-floor">
+        <div class="column-container">
+          <div class="column-track"></div>
+          <div class="column-rungs" id="columnRungs"></div>
+          <div class="column-node top-node"></div>
+          <div class="column-node bottom-node"></div>
+          <div class="duel-clash"></div>
+          <div class="arena-center-label" style="left:120%; width:80px; text-align:left; color:rgba(255,215,0,0.15);">NOWHERE<br>TO HIDE</div>
+        </div>
+      </div>
+    </div>
+    <div class="arena-info">
+      <span class="info-chip">Linear</span>
+      <span class="info-chip">Light vs Dark</span>
+      <span class="info-chip">Direct</span>
+    </div>
+  </div>
+
+  <!-- ===== CANDY TRAPDOOR ===== -->
+  <div class="arena-card candy">
+    <div class="arena-label">
+      <h2>🍬 THE CANDY TRAPDOOR 🐱</h2>
+      <span class="mode">Descent Penalty</span>
+    </div>
+    <div class="arena-viewport">
+      <div class="candy-arena">
+        <!-- The candy chaos layer -->
+        <div class="candy-floor"></div>
+        <div class="candy-grid-overlay" id="candyGrid"></div>
+        
+        <!-- Kittens -->
+        <div class="kitten" style="top:20%; left:15%; animation-delay:0s;">🐱</div>
+        <div class="kitten" style="top:55%; left:75%; animation-delay:0.8s;">😸</div>
+        <div class="kitten" style="top:35%; left:50%; animation-delay:1.5s;">🙀</div>
+        <div class="kitten" style="top:70%; left:30%; animation-delay:2.2s;">😹</div>
+        <div class="kitten" style="top:15%; left:85%; animation-delay:0.4s;">😻</div>
+        
+        <!-- Candy -->
+        <div class="candy-piece" style="top:25%; left:35%; animation-delay:0.3s;">🍬</div>
+        <div class="candy-piece" style="top:60%; left:55%; animation-delay:1.1s;">🍭</div>
+        <div class="candy-piece" style="top:40%; left:20%; animation-delay:1.8s;">🍫</div>
+        <div class="candy-piece" style="top:75%; left:65%; animation-delay:0.6s;">🍩</div>
+        <div class="candy-piece" style="top:10%; left:60%; animation-delay:2.0s;">🧁</div>
+        <div class="candy-piece" style="top:50%; left:40%; animation-delay:1.4s;">🍪</div>
+
+        <!-- The "serious" Dudael overlay that cracks open -->
+        <div class="dudael-overlay"></div>
+        <div class="dudael-text">DESCENT — LEVEL 7</div>
+
+        <!-- System taunt -->
+        <div class="system-taunt">
+          <div class="taunt-candy">YOU GAVE UP?</div>
+          <div class="taunt-candy" style="animation-delay:0.3s;">AFRAID OF CANDY AND KITTENS? 🐱</div>
+        </div>
+      </div>
+    </div>
+    <div class="arena-info">
+      <span class="info-chip">10×10 Neon Grid</span>
+      <span class="info-chip">Vessel Trap</span>
+      <span class="info-chip">System Taunt</span>
+      <span class="info-chip">💀 Real Damage</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Build square grid cells
+  const squareGrid = document.getElementById('squareGrid');
+  for (let i = 0; i < 64; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    squareGrid.appendChild(cell);
+  }
+
+  // Build column rungs
+  const columnRungs = document.getElementById('columnRungs');
+  for (let i = 0; i < 15; i++) {
+    const rung = document.createElement('div');
+    rung.className = 'column-rung';
+    columnRungs.appendChild(rung);
+  }
+
+  // Build candy grid with randomized colors
+  const candyGrid = document.getElementById('candyGrid');
+  const candyColors = [
+    'rgba(255,105,180,0.15)', 'rgba(0,212,255,0.15)', 'rgba(255,244,79,0.12)',
+    'rgba(255,107,53,0.12)', 'rgba(191,95,255,0.15)', 'rgba(57,255,20,0.1)',
+    'rgba(255,105,180,0.25)', 'rgba(0,212,255,0.25)', 'rgba(255,244,79,0.2)',
+  ];
+
+  for (let i = 0; i < 100; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'candy-cell';
+    const color = candyColors[Math.floor(Math.random() * candyColors.length)];
+    cell.style.background = color;
+    cell.style.setProperty('--pop-dur', (1.5 + Math.random() * 2) + 's');
+    cell.style.setProperty('--pop-delay', (Math.random() * 3) + 's');
+    candyGrid.appendChild(cell);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SINERINE // Phase State Machine</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Crimson+Pro:ital,wght@0,400;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0D0E12;
+    color: #6B7B8D;
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(13,14,18,0.03) 2px, rgba(13,14,18,0.03) 4px);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .header {
+    padding: 28px 36px 20px;
+    border-bottom: 1px solid #1A1C24;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .header-title {
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: #3A3D48;
+    text-transform: uppercase;
+  }
+
+  .header-title span {
+    color: #6B7B8D;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 4px;
+    display: block;
+    margin-top: 4px;
+  }
+
+  .header-meta {
+    text-align: right;
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: #3A3D48;
+    line-height: 1.8;
+  }
+
+  /* ---- DIAGRAM AREA ---- */
+  .diagram-container {
+    padding: 40px 36px;
+    position: relative;
+  }
+
+  .diagram-label {
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: #2A2D38;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  /* Phase flow - horizontal */
+  .phase-flow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .phase-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    min-width: 100px;
+    flex: 1;
+  }
+
+  .phase-box {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #2A2D38;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s ease;
+    position: relative;
+    background: #0D0E12;
+  }
+
+  .phase-node:hover .phase-box {
+    border-color: #4A4D58;
+    background: #10111A;
+  }
+
+  .phase-node.active .phase-box {
+    background: #10111A;
+  }
+
+  .phase-number {
+    font-size: 6px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: #2A2D38;
+    position: absolute;
+    top: 6px;
+    left: 8px;
+  }
+
+  .phase-icon {
+    font-size: 18px;
+    line-height: 1;
+    margin-bottom: 2px;
+    opacity: 0.6;
+    transition: opacity 0.4s ease;
+  }
+
+  .phase-node.active .phase-icon { opacity: 1; }
+
+  .phase-name {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    transition: color 0.4s ease;
+  }
+
+  .phase-type {
+    font-size: 6px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: #2A2D38;
+    margin-top: 3px;
+  }
+
+  /* Arrows between phases */
+  .phase-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+    height: 80px;
+    color: #2A2D38;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Inner loop bracket */
+  .inner-loop-bracket {
+    position: relative;
+    margin-top: 12px;
+    margin-left: 0;
+    padding: 12px 0 0;
+  }
+
+  .loop-line {
+    position: absolute;
+    height: 2px;
+    bottom: 0;
+    transition: background 0.4s ease;
+  }
+
+  .loop-label {
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: #3A3D48;
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  /* Phase colors */
+  .phase-node[data-phase="title"] .phase-icon { color: #4A4D58; }
+  .phase-node[data-phase="title"] .phase-name { color: #4A4D58; }
+  .phase-node[data-phase="title"].active .phase-box { border-color: #4A4D58; }
+
+  .phase-node[data-phase="select"] .phase-icon { color: #D4A843; }
+  .phase-node[data-phase="select"] .phase-name { color: #D4A843; }
+  .phase-node[data-phase="select"].active .phase-box { border-color: #D4A843; }
+
+  .phase-node[data-phase="staging"] .phase-icon { color: #6B8F71; }
+  .phase-node[data-phase="staging"] .phase-name { color: #6B8F71; }
+  .phase-node[data-phase="staging"].active .phase-box { border-color: #6B8F71; }
+
+  .phase-node[data-phase="draft"] .phase-icon { color: #7B4FA2; }
+  .phase-node[data-phase="draft"] .phase-name { color: #7B4FA2; }
+  .phase-node[data-phase="draft"].active .phase-box { border-color: #7B4FA2; }
+
+  .phase-node[data-phase="level"] .phase-icon { color: #C04050; }
+  .phase-node[data-phase="level"] .phase-name { color: #C04050; }
+  .phase-node[data-phase="level"].active .phase-box { border-color: #C04050; }
+
+  .phase-node[data-phase="door"] .phase-icon { color: #8BA0B5; }
+  .phase-node[data-phase="door"] .phase-name { color: #8BA0B5; }
+  .phase-node[data-phase="door"].active .phase-box { border-color: #8BA0B5; }
+
+  .phase-node[data-phase="drop"] .phase-icon { color: #B8863B; }
+  .phase-node[data-phase="drop"] .phase-name { color: #B8863B; }
+  .phase-node[data-phase="drop"].active .phase-box { border-color: #B8863B; }
+
+  /* ---- DETAIL PANEL ---- */
+  .detail-panel {
+    margin: 0 36px;
+    border-top: 1px solid #1A1C24;
+    padding: 32px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+    min-height: 280px;
+  }
+
+  .detail-col {
+    border-left: 1px solid #1A1C24;
+    padding-left: 16px;
+  }
+
+  .detail-label {
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: #3A3D48;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .detail-value {
+    font-size: 10px;
+    font-weight: 400;
+    color: #6B7B8D;
+    line-height: 1.9;
+  }
+
+  .detail-value .field {
+    display: block;
+    margin: 4px 0;
+    font-size: 9px;
+  }
+
+  .detail-value .field-name {
+    color: #4A4D58;
+    font-weight: 700;
+    font-size: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .detail-value .field-desc {
+    color: #3A3D48;
+    font-size: 8px;
+    margin-left: 8px;
+  }
+
+  .component-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 7px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    border: 1px solid #2A2D38;
+    color: #4A4D58;
+    margin: 2px 4px 2px 0;
+    transition: all 0.3s ease;
+  }
+
+  .theology-note {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: #4A4D58;
+    line-height: 1.8;
+    margin-top: 8px;
+  }
+
+  .loop-indicator {
+    display: inline-block;
+    padding: 2px 10px;
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 1.5px;
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  .transition-list {
+    font-size: 8px;
+    color: #3A3D48;
+    line-height: 2.4;
+  }
+
+  .transition-list .arrow { color: #2A2D38; margin: 0 4px; }
+
+  /* ---- LOOP DIAGRAM (SVG) ---- */
+  .loop-svg-container {
+    margin: 0 36px 20px;
+    padding: 20px 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  .footer-bar {
+    height: 1px;
+    background: #1A1C24;
+    margin: 0 36px;
+  }
+
+  .footer-text {
+    padding: 16px 36px;
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: #2A2D38;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media (max-width: 800px) {
+    .phase-flow { flex-wrap: wrap; justify-content: center; }
+    .detail-panel { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-title">
+    Sinerine Forensic Archive
+    <span>Phase State Machine</span>
+  </div>
+  <div class="header-meta">
+    DOCUMENT: PHASE-FSM-001<br>
+    VERSION: V-00 // 7-PHASE LOOP<br>
+    INNER LOOP: DRAFT → LEVEL → DOOR
+  </div>
+</div>
+
+<div class="diagram-container">
+  <div class="diagram-label">Linear Phase Sequence // Click any phase for detail</div>
+  
+  <div class="phase-flow">
+    <div class="phase-node active" data-phase="title" onclick="selectPhase('title')">
+      <div class="phase-box">
+        <div class="phase-number">01</div>
+        <div class="phase-icon">◈</div>
+      </div>
+      <div class="phase-name">Title</div>
+      <div class="phase-type">Entry</div>
+    </div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-node" data-phase="select" onclick="selectPhase('select')">
+      <div class="phase-box">
+        <div class="phase-number">02</div>
+        <div class="phase-icon">⬡</div>
+      </div>
+      <div class="phase-name">Select</div>
+      <div class="phase-type">Identity</div>
+    </div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-node" data-phase="staging" onclick="selectPhase('staging')">
+      <div class="phase-box">
+        <div class="phase-number">03</div>
+        <div class="phase-icon">⊞</div>
+      </div>
+      <div class="phase-name">Staging</div>
+      <div class="phase-type">Prep</div>
+    </div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-node" data-phase="draft" onclick="selectPhase('draft')">
+      <div class="phase-box">
+        <div class="phase-number">04</div>
+        <div class="phase-icon">⊟</div>
+      </div>
+      <div class="phase-name">Draft</div>
+      <div class="phase-type">Keepers</div>
+    </div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-node" data-phase="level" onclick="selectPhase('level')">
+      <div class="phase-box">
+        <div class="phase-number">05</div>
+        <div class="phase-icon">◉</div>
+      </div>
+      <div class="phase-name">Level</div>
+      <div class="phase-type">Active</div>
+    </div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-node" data-phase="door" onclick="selectPhase('door')">
+      <div class="phase-box">
+        <div class="phase-number">06</div>
+        <div class="phase-icon">⊡</div>
+      </div>
+      <div class="phase-name">Door</div>
+      <div class="phase-type">Choice</div>
+    </div>
+    <div class="phase-arrow">→</div>
+    <div class="phase-node" data-phase="drop" onclick="selectPhase('drop')">
+      <div class="phase-box">
+        <div class="phase-number">07</div>
+        <div class="phase-icon">⊘</div>
+      </div>
+      <div class="phase-name">Drop</div>
+      <div class="phase-type">Terminal</div>
+    </div>
+  </div>
+</div>
+
+<!-- Loop Diagram -->
+<div class="loop-svg-container">
+  <svg viewBox="0 0 700 80" width="700" height="80" xmlns="http://www.w3.org/2000/svg">
+    <!-- Outer run bracket: Staging → Drop -->
+    <line x1="200" y1="10" x2="200" y2="20" stroke="#6B8F71" stroke-width="0.5" opacity="0.4"/>
+    <line x1="200" y1="20" x2="650" y2="20" stroke="#6B8F71" stroke-width="0.5" opacity="0.4"/>
+    <line x1="650" y1="10" x2="650" y2="20" stroke="#6B8F71" stroke-width="0.5" opacity="0.4"/>
+    <text x="425" y="16" font-family="JetBrains Mono, monospace" font-size="7" fill="#6B8F71" fill-opacity="0.5" text-anchor="middle" letter-spacing="2">RUN LOOP — STAGING RE-ENTRY ON DEATH</text>
+
+    <!-- Inner loop bracket: Draft → Level → Door -->
+    <line x1="300" y1="40" x2="300" y2="50" stroke="#7B4FA2" stroke-width="0.8" opacity="0.6"/>
+    <line x1="300" y1="50" x2="550" y2="50" stroke="#7B4FA2" stroke-width="0.8" opacity="0.6"/>
+    <line x1="550" y1="40" x2="550" y2="50" stroke="#7B4FA2" stroke-width="0.8" opacity="0.6"/>
+    <!-- Loop-back arrow -->
+    <path d="M 550 50 C 560 50 560 65 540 65 L 310 65 C 290 65 290 50 300 50" fill="none" stroke="#7B4FA2" stroke-width="0.6" opacity="0.4" stroke-dasharray="3 3"/>
+    <polygon points="300,48 296,53 304,53" fill="#7B4FA2" fill-opacity="0.4"/>
+    <text x="425" y="47" font-family="JetBrains Mono, monospace" font-size="7" fill="#7B4FA2" fill-opacity="0.7" text-anchor="middle" letter-spacing="2">INNER LOOP — DRAFT → LEVEL → DOOR</text>
+    <text x="425" y="73" font-family="Crimson Pro, serif" font-size="8" fill="#4A4D58" fill-opacity="0.5" text-anchor="middle" font-style="italic">door choice loops back to draft or triggers drop</text>
+  </svg>
+</div>
+
+<div class="detail-panel" id="detailPanel">
+  <!-- Populated by JS -->
+</div>
+
+<div class="footer-bar"></div>
+<div class="footer-text">
+  <span>SINERINE // V-00 PHASE ARCHITECTURE</span>
+  <span>7 PHASES // 2 LOOPS // 1 SURFACE</span>
+</div>
+
+<script>
+const phaseData = {
+  title: {
+    name: 'Title',
+    color: '#4A4D58',
+    summary: 'Entry point. Brand presence, session initialization, meta-progress loading. The forensic archive opens.',
+    reads: [
+      { name: 'meta.hasExistingSave', desc: 'Determine continue vs. new run' },
+      { name: 'meta.totalRuns', desc: 'Display run counter' },
+      { name: 'meta.unlockedVessels', desc: 'Pre-load available classes' }
+    ],
+    writes: [
+      { name: 'game.phase', desc: '→ TITLE' },
+      { name: 'session.startedAt', desc: 'Timestamp for run tracking' }
+    ],
+    components: ['TitleScreen', 'RunCounter', 'ContinuePrompt'],
+    transitions: ['→ SELECT (new game)', '→ STAGING (continue run)'],
+    theology: 'The archive door. Before the descent, there is the threshold — the moment of choosing to enter.'
+  },
+  select: {
+    name: 'Select',
+    color: '#D4A843',
+    summary: 'Vessel class selection. Player commits identity for this run. Each Vessel shapes the entire downstream experience.',
+    reads: [
+      { name: 'meta.unlockedVessels', desc: 'Which classes are available' },
+      { name: 'meta.vesselHistory', desc: 'Past runs per Vessel for display' },
+      { name: 'vessels.registry', desc: 'Stats, bias, playstyle data' }
+    ],
+    writes: [
+      { name: 'game.vessel', desc: 'Selected Vessel class' },
+      { name: 'game.lightBias', desc: 'Starting Light value from Vessel' },
+      { name: 'game.darkBias', desc: 'Starting Dark value from Vessel' },
+      { name: 'game.phase', desc: '→ SELECT' }
+    ],
+    components: ['VesselSelector', 'VesselCard', 'VesselPreview', 'BiasIndicator'],
+    transitions: ['→ STAGING (vessel confirmed)'],
+    theology: 'You choose what you carry into the dark. The Vessel is not armor — it is temperament.'
+  },
+  staging: {
+    name: 'Staging',
+    color: '#6B8F71',
+    summary: 'The locker room. Heal, apply skills, spend meta-currency, review loadout. This is the calm between descents. Re-entry point after death.',
+    reads: [
+      { name: 'game.vessel', desc: 'Current Vessel + stats' },
+      { name: 'game.health', desc: 'Current HP for healing decisions' },
+      { name: 'game.depth', desc: 'Current Depth level' },
+      { name: 'meta.currency', desc: 'Available meta-currency' },
+      { name: 'inventory.skills', desc: 'Unlocked skills to apply' }
+    ],
+    writes: [
+      { name: 'game.health', desc: 'Post-healing HP' },
+      { name: 'game.activeSkills', desc: 'Skills equipped for this run' },
+      { name: 'meta.currency', desc: 'Spent currency' },
+      { name: 'game.phase', desc: '→ STAGING' }
+    ],
+    components: ['StagingArea', 'HealthStation', 'SkillLoadout', 'CurrencyDisplay', 'DepthIndicator'],
+    transitions: ['→ DRAFT (ready to descend)'],
+    theology: 'Even the condemned prepare. The Staging Area is liturgical — the ritual before the ordeal.'
+  },
+  draft: {
+    name: 'Draft',
+    color: '#7B4FA2',
+    summary: 'The Keepers present cards. The Surveyor (Light) and Smuggler (Dark) each offer selections. Your draft shapes what tools you carry into the Level.',
+    reads: [
+      { name: 'game.vessel', desc: 'Vessel bias affects card pool' },
+      { name: 'game.depth', desc: 'Depth affects card rarity/power' },
+      { name: 'game.lightDark', desc: 'Current parity affects Keeper offerings' },
+      { name: 'cards.pool', desc: 'Available card database' }
+    ],
+    writes: [
+      { name: 'game.hand', desc: 'Cards drafted for this Level' },
+      { name: 'game.lightDark', desc: 'Parity shift from card choices' },
+      { name: 'draft.history', desc: 'What was offered vs. taken' },
+      { name: 'game.phase', desc: '→ DRAFT' }
+    ],
+    components: ['DraftScreen', 'KeeperSurveyor', 'KeeperSmuggler', 'CardFan', 'ParityMeter'],
+    transitions: ['→ LEVEL (draft complete)'],
+    theology: 'The Keepers do not serve you. They offer what serves their own alignment. Choose carefully — every card tilts the balance.'
+  },
+  level: {
+    name: 'Level',
+    color: '#C04050',
+    summary: 'Active gameplay. A flexible container that loads different mini-game types — top-down, platformer, puzzles, and more. Points earned here determine which Doors become available. The UI adapts to whatever the encounter demands.',
+    reads: [
+      { name: 'game.hand', desc: 'Cards available from Draft' },
+      { name: 'game.vessel', desc: 'Vessel abilities and bias' },
+      { name: 'game.depth', desc: 'Difficulty scaling' },
+      { name: 'game.lightDark', desc: 'Current parity affects environment' },
+      { name: 'level.type', desc: 'Which mini-game module to load' }
+    ],
+    writes: [
+      { name: 'game.points', desc: 'Points earned from performance' },
+      { name: 'game.lightDark', desc: 'Parity shifts from gameplay' },
+      { name: 'game.health', desc: 'Damage taken / healing' },
+      { name: 'level.result', desc: 'Score, completion status' },
+      { name: 'game.phase', desc: '→ LEVEL' }
+    ],
+    components: ['LevelShell', 'GameSlot', 'HUD', 'PointsTracker', 'ParityOverlay', 'HealthBar'],
+    transitions: ['→ DOOR (level complete)', '→ DROP (death)'],
+    theology: 'The Depth tests. It does not explain itself. The Vessel endures or it does not.',
+    levelTypes: ['Top-Down', 'Platformer', 'Puzzle', 'Expandable']
+  },
+  door: {
+    name: 'Door',
+    color: '#8BA0B5',
+    summary: 'Path selection. Performance in Level determines which Doors are available. Each Door leads to a different Draft → Level configuration at the next Depth. The risk/reward gate.',
+    reads: [
+      { name: 'game.points', desc: 'Points earned unlock door options' },
+      { name: 'game.depth', desc: 'Current Depth position' },
+      { name: 'game.lightDark', desc: 'Parity affects door availability' },
+      { name: 'level.result', desc: 'How well you performed' }
+    ],
+    writes: [
+      { name: 'game.depth', desc: 'Increment Depth on descent' },
+      { name: 'game.doorChosen', desc: 'Which path for next loop' },
+      { name: 'game.phase', desc: '→ DOOR' }
+    ],
+    components: ['DoorScreen', 'DoorOption', 'DepthMeter', 'RiskIndicator'],
+    transitions: ['→ DRAFT (chose a door, loop continues)', '→ DROP (chose to extract / forced exit)'],
+    theology: 'Every door is a question: how much further will you go? The answer writes itself into the record.'
+  },
+  drop: {
+    name: 'Drop / Loop',
+    color: '#B8863B',
+    summary: 'Terminal state. Death or extraction triggers meta-progression writeback. Unlocks, scars, boons, and narrative flags persist to Supabase. Then back to Staging for the next attempt.',
+    reads: [
+      { name: 'game.depth', desc: 'How far you reached' },
+      { name: 'game.points', desc: 'Total points earned' },
+      { name: 'game.lightDark', desc: 'Final parity state' },
+      { name: 'game.vessel', desc: 'Vessel used for history' },
+      { name: 'level.result', desc: 'How the run ended' }
+    ],
+    writes: [
+      { name: 'meta.totalRuns', desc: 'Increment run counter' },
+      { name: 'meta.deepestDepth', desc: 'Update if new record' },
+      { name: 'meta.unlocks', desc: 'New vessels, cards, skills' },
+      { name: 'meta.scars', desc: 'Persistent negative modifiers' },
+      { name: 'meta.boons', desc: 'Persistent positive modifiers' },
+      { name: 'meta.narrativeFlags', desc: 'Story progression markers' },
+      { name: 'game.phase', desc: '→ DROP' }
+    ],
+    components: ['DropScreen', 'RunSummary', 'UnlockReveal', 'ScarBoonDisplay', 'MetaProgressBar'],
+    transitions: ['→ STAGING (new attempt)', '→ TITLE (exit to menu)'],
+    theology: 'Dying in the Drop is not failure. It is testimony. The record of what you attempted is the offering.'
+  }
+};
+
+function selectPhase(id) {
+  const data = phaseData[id];
+
+  document.querySelectorAll('.phase-node').forEach(n => n.classList.remove('active'));
+  document.querySelector(`[data-phase="${id}"]`).classList.add('active');
+
+  const panel = document.getElementById('detailPanel');
+  panel.innerHTML = `
+    <div class="detail-col">
+      <div class="detail-label">Phase ${Object.keys(phaseData).indexOf(id) + 1} — <span style="color:${data.color}">${data.name}</span></div>
+      <div class="detail-value">${data.summary}</div>
+      ${data.levelTypes ? `
+        <div style="margin-top:12px">
+          <div class="detail-label">Level Module Types</div>
+          ${data.levelTypes.map(t => `<span class="component-tag" style="border-color:${data.color}40;color:${data.color}">${t}</span>`).join('')}
+        </div>
+      ` : ''}
+      <div class="theology-note">${data.theology}</div>
+      <div style="margin-top:12px">
+        <div class="detail-label">Transitions</div>
+        <div class="transition-list">
+          ${data.transitions.map(t => `<div>${t}</div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-col">
+      <div class="detail-label">Redux Reads</div>
+      <div class="detail-value">
+        ${data.reads.map(r => `
+          <span class="field">
+            <span class="field-name">${r.name}</span>
+            <span class="field-desc">// ${r.desc}</span>
+          </span>
+        `).join('')}
+      </div>
+      <div style="margin-top:16px">
+        <div class="detail-label">Redux Writes</div>
+        <div class="detail-value">
+          ${data.writes.map(w => `
+            <span class="field">
+              <span class="field-name">${w.name}</span>
+              <span class="field-desc">// ${w.desc}</span>
+            </span>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-col">
+      <div class="detail-label">Mounted Components</div>
+      <div style="margin-top:4px">
+        ${data.components.map(c => `<span class="component-tag" style="border-color:${data.color}30;color:${data.color}90">&lt;${c}/&gt;</span>`).join('')}
+      </div>
+      <div style="margin-top:16px">
+        <div class="detail-label">Loop Position</div>
+        <div class="loop-indicator" style="border:1px solid ${data.color}40;color:${data.color}">
+          ${id === 'draft' || id === 'level' || id === 'door' ? 'INNER LOOP' : id === 'staging' || id === 'drop' ? 'OUTER LOOP' : 'LINEAR'}
+        </div>
+        <div style="font-size:8px;color:#2A2D38;margin-top:8px;line-height:1.8">
+          ${id === 'draft' || id === 'level' || id === 'door' 
+            ? 'Draft → Level → Door repeats as the player descends through Depth. Each cycle the cards change, the difficulty scales, and the parity shifts.' 
+            : id === 'staging' 
+            ? 'Re-entry point after Drop. The player returns here to heal, re-equip, and prepare for the next descent into the inner loop.'
+            : id === 'drop'
+            ? 'Terminal writeback. Everything earned persists. Then the player returns to Staging or exits to Title.'
+            : id === 'title'
+            ? 'One-time entry per session. Loads meta-state and routes to Select or continues existing run.'
+            : 'One-time per run. Once the Vessel is chosen, it cannot be changed until the next run.'}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+selectPhase('title');
+</script>
+</body>
+</html>

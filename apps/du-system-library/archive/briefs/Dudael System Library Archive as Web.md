@@ -4,7 +4,7 @@ Dudael System Library Archive as Web.
 
 # Dudael System Library Archive — Visual Asset Manifest
 
-Treating this thread + workspace as **one coherent project documentation site**, here's the complete visual asset list to make it portfolio-ready and navigable.[1][2][3]
+Treating this thread + workspace as **one coherent project documentation site**, here's the complete visual asset list to make it portfolio-ready and navigable.
 
 ***
 
@@ -31,7 +31,7 @@ Treating this thread + workspace as **one coherent project documentation site**,
 
 ## 2. Domain Category Icons (6 icons)
 
-One icon per core domain, used in navigation and doc headers.[3]
+One icon per core domain, used in navigation and doc headers.
 
 | Domain | Icon File | Visual Concept |  
 |--------|-----------|----------------|  
@@ -49,7 +49,7 @@ One icon per core domain, used in navigation and doc headers.[3]
 
 ## 3. The Five Bound — Sigil Set (5 sigils)
 
-Visual identity for each Vessel archetype.[1][4][5]
+Visual identity for each Vessel archetype.
 
 | Bound | Sigil File | Design Notes |  
 |-------|-----------|--------------|  
@@ -66,7 +66,7 @@ Visual identity for each Vessel archetype.[1][4][5]
 
 ## 4. Phase Flow Diagram (1 interactive diagram)
 
-Visual map of the seven-phase loop.[6][1]
+Visual map of the seven-phase loop.
 
 - **`phase_flow_diagram.png`** (1600×900px)  
   - Shows: Title → Select → Staging → Draft → Level → Door → Drop  
@@ -81,7 +81,7 @@ Visual map of the seven-phase loop.[6][1]
 
 ## 5. Architecture Diagrams (3 diagrams)
 
-Core technical visuals for the Engine & Architecture domain.[1][7]
+Core technical visuals for the Engine & Architecture domain.
 
 ### A. Three-Layer Architecture  
 - **`architecture_three_layer.png`** (1200×800px)  
@@ -107,7 +107,7 @@ Core technical visuals for the Engine & Architecture domain.[1][7]
 
 ## 6. Lore & World Visuals (4 images)
 
-Supporting the Lore Bible and World domain.[4][8]
+Supporting the Lore Bible and World domain.
 
 ### Location Concept Boards  
 - **`location_threshold.png`** (1200×675px)  
@@ -125,7 +125,7 @@ Supporting the Lore Bible and World domain.[4][8]
 
 ## 7. Brand Token Showcase (1 visual reference)
 
-Visual display of the Sinerine design system.[3]
+Visual display of the Sinerine design system.
 
 - **`brand_tokens_showcase.png`** (1600×1200px)  
   - Grid layout showing:  
@@ -225,7 +225,7 @@ Blueprint for how assets are composed into the web interface.
 
 ## Visual Style Guide (For Consistency Across All Assets)
 
-**Palette:** Sinerine brand tokens[3]  
+**Palette:** Sinerine brand tokens  
 - Light: `#FFA500` (amber), `#FFD700` (gold)  
 - Dark: `#4B0082` (indigo), `#8A2BE2` (violet)  
 - Threshold: `#808080` (gray), gradient blends  
@@ -253,18 +253,18 @@ Blueprint for how assets are composed into the web interface.
 ## ✅ Generated Assets  
 
 ### 1. Hero Banner  
-[1] **dudael_archive_hero.png** - Full-width header with forensic theophany aesthetic, spiral patterns, Light/Dark gradient, and archive title  
+ **dudael_archive_hero.png** - Full-width header with forensic theophany aesthetic, spiral patterns, Light/Dark gradient, and archive title  
 ### 2. Logo/Favicon  
-[2] **dudael_logo_icon.png** - Hourglass with sacred geometry, works as favicon or standalone logo mark  
+ **dudael_logo_icon.png** - Hourglass with sacred geometry, works as favicon or standalone logo mark  
 ### 3. Domain Category Icons  
-[3] **domain_icons_set.png** - All six navigation icons (Lore, Bound, Systems, Brand, Engine, Pipeline) in a single sheet  
+ **domain_icons_set.png** - All six navigation icons (Lore, Bound, Systems, Brand, Engine, Pipeline) in a single sheet  
 ### 4. Phase Flow Diagram  
-[4] **phase_flow_diagram.png** - Complete seven-phase loop with PhaseWall boundaries, Run Repo data store, and Light/Dark color coding  
+ **phase_flow_diagram.png** - Complete seven-phase loop with PhaseWall boundaries, Run Repo data store, and Light/Dark color coding  
 ### 5. Documentation Navigation Banners  
-[5] **banner_architecture.png** - Layered stack with gear motif    
-[6] **banner_lore.png** - Spiral galaxy with angelic wing and Jude 1:6 reference    
-[7] **banner_bound.png** - Five Bound sigils in a row    
-[8] **banner_systems.png** - Hourglass with balance scales (Light/Dark)    
+ **banner_architecture.png** - Layered stack with gear motif    
+ **banner_lore.png** - Spiral galaxy with angelic wing and Jude 1:6 reference    
+ **banner_bound.png** - Five Bound sigils in a row    
+ **banner_systems.png** - Hourglass with balance scales (Light/Dark)    
  **banner_brand.png** - Sinerine tri-polar palette bars  
 **banner_pipeline.png** - Conveyor belt workflow stages  
 **banner_refactor.png** - Git commit graph with checkmarks  
@@ -345,16 +345,16 @@ Continue to tier 3
 Perfect! I've completed all **Tier 3 polish assets**:  
 ## ✅ Generated Assets - Tier 3  
 ### Four Lore Location Concept Boards (1200×675px each)  
-[1] **location_threshold.png** - Liminal boundary zone with grayscale tones and soft amber/violet edges, transitional atmosphere    
-[2] **location_crossroads.png** - Three diverging door paths glowing Light (amber), Dark (violet), and Secret (gray blend)    
-[3] **location_sanctum.png** - Clinical sacred space flooded with intense amber-gold Light, forensic examination aesthetic    
-[4] **location_abyss.png** - Deep containment prison with massive chains, oppressive violet-black depths, eternal weight  
+ **location_threshold.png** - Liminal boundary zone with grayscale tones and soft amber/violet edges, transitional atmosphere    
+ **location_crossroads.png** - Three diverging door paths glowing Light (amber), Dark (violet), and Secret (gray blend)    
+ **location_sanctum.png** - Clinical sacred space flooded with intense amber-gold Light, forensic examination aesthetic    
+ **location_abyss.png** - Deep containment prison with massive chains, oppressive violet-black depths, eternal weight  
 ### Three Social Sharing Open Graph Images (1200×630px each)  
-[5] **og_home.png** - Archive homepage card with hourglass symbol and complete documentation tagline    
-[6] **og_lore.png** - Lore Bible card with six-winged angel silhouette and theology focus    
-[7] **og_architecture.png** - Architecture card with technical diagram snippet and Redux/PhaseWall callouts  
+ **og_home.png** - Archive homepage card with hourglass symbol and complete documentation tagline    
+ **og_lore.png** - Lore Bible card with six-winged angel silhouette and theology focus    
+ **og_architecture.png** - Architecture card with technical diagram snippet and Redux/PhaseWall callouts  
 ### Supplementary UI Elements  
-[8] **status_badges.png** - Three badges (Complete/In Progress/Backlog) for task tracking in documentation    
+ **status_badges.png** - Three badges (Complete/In Progress/Backlog) for task tracking in documentation    
 (see the generated image above) **phase_icons_mini.png** - Seven 32×32px phase icons (crown, cursor, table, card, room, doors, hourglass) for inline use    
 (see the generated image above) **alignment_indicators.png** - Three 48×48px circular icons (Light amber, Secret gradient, Dark violet) for UI displays  
 ### Site Layout Blueprint  
@@ -461,16 +461,16 @@ Continue to tier 3
 Perfect! I've completed all **Tier 3 polish assets**:  
 ## ✅ Generated Assets - Tier 3  
 ### Four Lore Location Concept Boards (1200×675px each)  
-[1] **location_threshold.png** - Liminal boundary zone with grayscale tones and soft amber/violet edges, transitional atmosphere    
-[2] **location_crossroads.png** - Three diverging door paths glowing Light (amber), Dark (violet), and Secret (gray blend)    
-[3] **location_sanctum.png** - Clinical sacred space flooded with intense amber-gold Light, forensic examination aesthetic    
-[4] **location_abyss.png** - Deep containment prison with massive chains, oppressive violet-black depths, eternal weight  
+ **location_threshold.png** - Liminal boundary zone with grayscale tones and soft amber/violet edges, transitional atmosphere    
+ **location_crossroads.png** - Three diverging door paths glowing Light (amber), Dark (violet), and Secret (gray blend)    
+ **location_sanctum.png** - Clinical sacred space flooded with intense amber-gold Light, forensic examination aesthetic    
+ **location_abyss.png** - Deep containment prison with massive chains, oppressive violet-black depths, eternal weight  
 ### Three Social Sharing Open Graph Images (1200×630px each)  
-[5] **og_home.png** - Archive homepage card with hourglass symbol and complete documentation tagline    
-[6] **og_lore.png** - Lore Bible card with six-winged angel silhouette and theology focus    
-[7] **og_architecture.png** - Architecture card with technical diagram snippet and Redux/PhaseWall callouts  
+ **og_home.png** - Archive homepage card with hourglass symbol and complete documentation tagline    
+ **og_lore.png** - Lore Bible card with six-winged angel silhouette and theology focus    
+ **og_architecture.png** - Architecture card with technical diagram snippet and Redux/PhaseWall callouts  
 ### Supplementary UI Elements  
-[8] **status_badges.png** - Three badges (Complete/In Progress/Backlog) for task tracking in documentation    
+ **status_badges.png** - Three badges (Complete/In Progress/Backlog) for task tracking in documentation    
 (see the generated image above) **phase_icons_mini.png** - Seven 32×32px phase icons (crown, cursor, table, card, room, doors, hourglass) for inline use    
 (see the generated image above) **alignment_indicators.png** - Three 48×48px circular icons (Light amber, Secret gradient, Dark violet) for UI displays  
 ### Site Layout Blueprint  

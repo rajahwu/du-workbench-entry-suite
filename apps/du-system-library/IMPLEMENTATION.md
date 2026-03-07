@@ -92,16 +92,16 @@ mkdir -p dudael-system-library/archive/{chat-logs,briefs,lore,specs}
 - [X] `pasted-text.txt` (Refactor Guide) → `archive/chat-logs/pasted-text-refactor.txt`
 
 ### Briefs
-- [ ] `DUDAEL_Gate_Refactor_Brief.docx` → `archive/briefs/`
-- [ ] `FALLEN_ANGELS_Sprint_Plan.md` → `archive/briefs/`
+- [X] `DUDAEL_Gate_Refactor_Brief.docx` → `archive/briefs/`
+- [X] `FALLEN_ANGELS_Sprint_Plan.md` → `archive/briefs/`
 
 ### Lore
-- [ ] `Oiketrion.md` → `archive/lore/`
-- [ ] `Dudael_Lore_Compilation.docx` → `archive/lore/`
+- [X] `Oiketrion.md` → `archive/lore/`
+- [X] `Dudael_Lore_Compilation.docx` → `archive/lore/`
 - [ ] `Core_Vessel_shape.md` → `archive/lore/`
 
 ### Specs
-- [ ] `FALLEN_ANGELS_Proto_Index.md` → `archive/specs/`
+- [X] `FALLEN_ANGELS_Proto_Index.md` → `archive/specs/`
 
 **Status:** Pending — requires file access  
 **Time:** 10 minutes

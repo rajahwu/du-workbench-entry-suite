@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>SINERINE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #0D0E12;
+    --surface: #13141A;
+    --border: #1E2028;
+    --dim: #2A2D38;
+    --muted: #4A4D58;
+    --text: #8B8FA0;
+    --light: #D4A843;
+    --dark: #7B4FA2;
+    --neutral: #8BA0B5;
+    --danger: #C04050;
+    --success: #6B8F71;
+    --amber: #B8863B;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ---- SCREEN SYSTEM ---- */
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .screen.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ---- SHARED UI ---- */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    min-height: 44px;
+  }
+
+  .top-bar-label {
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .top-bar-phase {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .parity-display {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 400;
+  }
+
+  .parity-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  .parity-dot.light { background: var(--light); }
+  .parity-dot.dark { background: var(--dark); }
+
+  .content-area {
+    flex: 1;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .bottom-action {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 2px;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--dim);
+    color: var(--text);
+  }
+
+  .btn-primary:hover { background: var(--muted); }
+
+  .btn-light {
+    background: linear-gradient(135deg, #D4A84340, #D4A84320);
+    color: var(--light);
+    border: 1px solid #D4A84330;
+  }
+
+  .btn-dark {
+    background: linear-gradient(135deg, #7B4FA240, #7B4FA220);
+    color: var(--dark);
+    border: 1px solid #7B4FA230;
+  }
+
+  .btn-go {
+    background: var(--success);
+    color: #fff;
+  }
+
+  .btn-danger {
+    background: var(--danger);
+    color: #fff;
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  .section-label {
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .theology-line {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.6;
+    padding: 8px 0;
+  }
+
+  /* ---- TITLE SCREEN ---- */
+  .title-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .title-logo {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 8px;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+
+  .title-sub {
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: 3px;
+    color: var(--dim);
+  }
+
+  .title-version {
+    font-size: 7px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    margin-top: 24px;
+  }
+
+  /* ---- SELECT SCREEN ---- */
+  .vessel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+  }
+
+  .vessel-card:active { transform: scale(0.98); }
+  .vessel-card.selected { border-color: var(--muted); background: #1A1B22; }
+
+  .vessel-sigil {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .vessel-info { flex: 1; min-width: 0; }
+
+  .vessel-info-name {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .vessel-info-desc {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .vessel-info-perk {
+    font-size: 8px;
+    font-weight: 400;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .vessel-bias-bar {
+    display: flex;
+    height: 3px;
+    border-radius: 1px;
+    overflow: hidden;
+    margin-top: 6px;
+    background: var(--border);
+  }
+
+  .vessel-bias-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+
+  /* ---- STAGING SCREEN ---- */
+  .staging-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .staging-stat-label {
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .staging-stat-value {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .staging-action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .staging-btn {
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+
+  .staging-btn:active { background: #1A1B22; }
+  .staging-btn:disabled { opacity: 0.3; pointer-events: none; }
+
+  .staging-btn .cost {
+    display: block;
+    font-size: 7px;
+    color: var(--dim);
+    margin-top: 4px;
+  }
+
+  /* ---- DRAFT SCREEN ---- */
+  .keeper-section {
+    padding: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+
+  .keeper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .keeper-name {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .keeper-tag {
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border: 1px solid;
+  }
+
+  .draft-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    margin-top: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .draft-card:active { transform: scale(0.98); }
+  .draft-card.picked { border-color: var(--success); opacity: 0.5; pointer-events: none; }
+
+  .draft-card-name {
+    font-size: 10px;
+    font-weight: 400;
+  }
+
+  .draft-card-effect {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* ---- LEVEL SCREEN ---- */
+  .level-header {
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .level-name {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .level-type-tag {
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .game-slot {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .game-slot-placeholder {
+    text-align: center;
+    color: var(--dim);
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+
+  /* Simple mini-game: tap targets */
+  .tap-area {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+  }
+
+  .tap-cell {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 16px;
+  }
+
+  .tap-cell.lit {
+    border-color: var(--light);
+    background: #D4A84315;
+    animation: pulse 0.6s ease;
+  }
+
+  .tap-cell.dark-lit {
+    border-color: var(--dark);
+    background: #7B4FA215;
+    animation: pulse 0.6s ease;
+  }
+
+  .tap-cell.hit {
+    background: var(--success);
+    border-color: var(--success);
+  }
+
+  .tap-cell.miss {
+    background: var(--danger);
+    border-color: var(--danger);
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+  }
+
+  .hud-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 9px;
+  }
+
+  .hud-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .hud-label {
+    font-size: 7px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  .hud-value {
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ---- DOOR SCREEN ---- */
+  .door-option {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .door-option:active { transform: scale(0.98); }
+
+  .door-option.locked {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .door-option-name {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .door-option-desc {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .door-cost {
+    font-size: 8px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: var(--dim);
+    margin-top: 8px;
+    text-transform: uppercase;
+  }
+
+  .door-cost .required {
+    font-weight: 700;
+  }
+
+  /* ---- DROP SCREEN ---- */
+  .drop-summary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .drop-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+  }
+
+  .drop-stat:last-child { border-bottom: none; }
+
+  .drop-stat-label {
+    color: var(--muted);
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .drop-stat-value {
+    font-weight: 700;
+  }
+
+  .unlock-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 8px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    border: 1px solid var(--success);
+    color: var(--success);
+    margin: 4px 4px 0 0;
+  }
+
+  /* Health bar */
+  .health-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .health-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .health-fill {
+    height: 100%;
+    background: var(--success);
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+
+  .health-fill.low { background: var(--danger); }
+
+  /* Depth meter */
+  .depth-meter {
+    display: flex;
+    gap: 3px;
+    align-items: center;
+  }
+
+  .depth-pip {
+    width: 8px;
+    height: 8px;
+    border: 1px solid var(--border);
+    border-radius: 1px;
+    transition: all 0.3s ease;
+  }
+
+  .depth-pip.reached {
+    background: var(--amber);
+    border-color: var(--amber);
+  }
+
+  .depth-pip.current {
+    background: var(--text);
+    border-color: var(--text);
+  }
+
+  /* Timer bar for level */
+  .timer-bar {
+    height: 3px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .timer-fill {
+    height: 100%;
+    background: var(--light);
+    transition: width 0.1s linear;
+  }
+
+  .timer-fill.urgent { background: var(--danger); }
+</style>
+</head>
+<body>
+
+<!-- ============ TITLE ============ -->
+<div class="screen active" id="screen-title">
+  <div class="title-center">
+    <div class="title-sub">FORENSIC ARCHIVE</div>
+    <div class="title-logo">Sinerine</div>
+    <div class="title-sub">THE DUDAEL DROP</div>
+    <div class="title-version">V-00 // PROTOTYPE</div>
+  </div>
+  <div class="bottom-action">
+    <button class="btn btn-primary" onclick="goTo('select')">Enter</button>
+  </div>
+</div>
+
+<!-- ============ SELECT ============ -->
+<div class="screen" id="screen-select">
+  <div class="top-bar">
+    <span class="top-bar-label">Phase 02</span>
+    <span class="top-bar-phase" style="color:var(--light)">Select</span>
+  </div>
+  <div class="content-area">
+    <div class="theology-line">The fall was not an end. It was a beginning.</div>
+    <div class="section-label">Choose Your Vessel</div>
+    <div id="vesselList"></div>
+  </div>
+  <div class="bottom-action">
+    <button class="btn btn-primary" id="selectConfirm" disabled onclick="confirmVessel()">Choose Vessel</button>
+  </div>
+</div>
+
+<!-- ============ STAGING ============ -->
+<div class="screen" id="screen-staging">
+  <div class="top-bar">
+    <span class="top-bar-label">Phase 03</span>
+    <span class="top-bar-phase" style="color:var(--success)">Staging</span>
+  </div>
+  <div class="content-area" id="stagingContent">
+    <!-- Populated by JS -->
+  </div>
+  <div class="bottom-action">
+    <button class="btn btn-go" onclick="goTo('draft')">Descend</button>
+  </div>
+</div>
+
+<!-- ============ DRAFT ============ -->
+<div class="screen" id="screen-draft">
+  <div class="top-bar">
+    <div>
+      <span class="top-bar-label">Phase 04</span>
+      <span class="top-bar-phase" style="color:var(--dark)"> Draft</span>
+    </div>
+    <div class="parity-display">
+      <span><span class="parity-dot light"></span><span id="draftLight">0</span></span>
+      <span><span class="parity-dot dark"></span><span id="draftDark">0</span></span>
+    </div>
+  </div>
+  <div class="content-area" id="draftContent">
+    <!-- Populated by JS -->
+  </div>
+  <div class="bottom-action">
+    <button class="btn btn-primary" id="draftDone" disabled onclick="goTo('level')">Enter the Depth</button>
+  </div>
+</div>
+
+<!-- ============ LEVEL ============ -->
+<div class="screen" id="screen-level">
+  <div class="top-bar">
+    <div>
+      <span class="top-bar-label" id="levelDepthLabel">Depth 1</span>
+      <span class="top-bar-phase" style="color:var(--danger)" id="levelTitle">The Threshold</span>
+    </div>
+    <div class="parity-display">
+      <span><span class="parity-dot light"></span><span id="levelLight">0</span></span>
+      <span><span class="parity-dot dark"></span><span id="levelDark">0</span></span>
+    </div>
+  </div>
+  <div class="timer-bar"><div class="timer-fill" id="timerFill" style="width:100%"></div></div>
+  <div class="hud-bar" style="padding:4px 16px">
+    <div class="hud-item">
+      <span class="hud-label">HP</span>
+      <div class="health-bar-container" style="width:80px">
+        <div class="health-bar"><div class="health-fill" id="healthFill" style="width:100%"></div></div>
+      </div>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">PTS</span>
+      <span class="hud-value" id="levelPoints">0</span>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">Depth</span>
+      <div class="depth-meter" id="depthMeter"></div>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;padding:0 16px 16px">
+    <div class="level-header">
+      <div class="level-type-tag" id="levelTypeTag">Puzzle</div>
+    </div>
+    <div class="game-slot" id="gameSlot">
+      <!-- Mini-game loads here -->
+    </div>
+  </div>
+</div>
+
+<!-- ============ DOOR ============ -->
+<div class="screen" id="screen-door">
+  <div class="top-bar">
+    <div>
+      <span class="top-bar-label">Phase 06</span>
+      <span class="top-bar-phase" style="color:var(--neutral)">Door</span>
+    </div>
+    <div class="parity-display">
+      <span><span class="parity-dot light"></span><span id="doorLight">0</span></span>
+      <span><span class="parity-dot dark"></span><span id="doorDark">0</span></span>
+    </div>
+  </div>
+  <div class="content-area" id="doorContent">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<!-- ============ DROP ============ -->
+<div class="screen" id="screen-drop">
+  <div class="top-bar">
+    <span class="top-bar-label">Phase 07</span>
+    <span class="top-bar-phase" style="color:var(--amber)">Drop</span>
+  </div>
+  <div class="content-area" id="dropContent">
+    <!-- Populated by JS -->
+  </div>
+  <div class="bottom-action">
+    <button class="btn btn-primary" onclick="resetGame()">Return to Staging</button>
+  </div>
+</div>
+
+<script>
+// ---- GAME STATE ----
+const state = {
+  vessel: null,
+  health: 10,
+  maxHealth: 10,
+  light: 0,
+  dark: 0,
+  points: 0,
+  depth: 1,
+  maxDepth: 5,
+  hand: [],
+  currency: 3,
+  runs: 0
+};
+
+const vessels = [
+  { id:'seraph', name:'Seraph', desc:'the burning ones', perk:'+1 Light per level', icon:'◇', color:'var(--light)', lightBias:70, darkBias:30, startLight:1, startDark:0, levelBonus:'light' },
+  { id:'shadow', name:'Shadow', desc:'the hidden ones', perk:'+1 Dark per level', icon:'◈', color:'var(--dark)', lightBias:25, darkBias:75, startLight:0, startDark:1, levelBonus:'dark' },
+  { id:'exile', name:'Exile', desc:'the displaced ones', perk:'Choose +1 L or D', icon:'◇', color:'var(--neutral)', lightBias:50, darkBias:50, startLight:0, startDark:0, levelBonus:'choice' },
+  { id:'penitent', name:'Penitent', desc:'the bowed ones', perk:'+1 HP per level', icon:'▽', color:'var(--amber)', lightBias:60, darkBias:40, startLight:1, startDark:0, levelBonus:'heal' },
+  { id:'rebel', name:'Rebel', desc:'the defiant ones', perk:'+2 PTS per level', icon:'△', color:'var(--danger)', lightBias:35, darkBias:65, startLight:0, startDark:1, levelBonus:'points' }
+];
+
+const cardPool = {
+  light: [
+    { name:'Sanctum Ward', effect:'+2 Light', light:2, dark:0 },
+    { name:'Grace Thread', effect:'+1 Light', light:1, dark:0 },
+    { name:'Beacon Pulse', effect:'+3 Light', light:3, dark:0 },
+    { name:'Covenant Seal', effect:'+1 Light, +1 HP', light:1, dark:0, heal:1 },
+  ],
+  dark: [
+    { name:'Root-Cutter\'s Venom', effect:'+2 Dark', light:0, dark:2 },
+    { name:'Veil Fragment', effect:'+1 Dark', light:0, dark:1 },
+    { name:'Abyssal Echo', effect:'+3 Dark', light:0, dark:3 },
+    { name:'Smuggler\'s Cut', effect:'+1 Dark, +2 PTS', light:0, dark:1, points:2 },
+  ]
+};
+
+const levelNames = ['The Threshold','The Hollow','The Furnace','The Archive','Dudael Core'];
+const levelTypes = ['Puzzle','Top-Down','Platformer','Puzzle','Survival'];
+
+// ---- NAVIGATION ----
+function goTo(screen) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + screen).classList.add('active');
+  if (screen === 'staging') renderStaging();
+  if (screen === 'draft') renderDraft();
+  if (screen === 'level') startLevel();
+  if (screen === 'door') renderDoor();
+  if (screen === 'drop') renderDrop();
+}
+
+// ---- SELECT ----
+(function renderSelect() {
+  const list = document.getElementById('vesselList');
+  list.innerHTML = vessels.map(v => `
+    <div class="vessel-card" id="vc-${v.id}" onclick="pickVessel('${v.id}')" style="margin-bottom:8px">
+      <div class="vessel-sigil" style="color:${v.color};border-color:${v.color}30">${v.icon}</div>
+      <div class="vessel-info">
+        <div class="vessel-info-name" style="color:${v.color}">${v.name}</div>
+        <div class="vessel-info-desc">${v.desc}</div>
+        <div class="vessel-info-perk" style="color:${v.color}">${v.perk}</div>
+        <div class="vessel-bias-bar">
+          <div class="vessel-bias-fill" style="width:${v.lightBias}%;background:var(--light)"></div>
+          <div class="vessel-bias-fill" style="width:${v.darkBias}%;background:var(--dark)"></div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+})();
+
+function pickVessel(id) {
+  document.querySelectorAll('.vessel-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('vc-' + id).classList.add('selected');
+  state.vessel = vessels.find(v => v.id === id);
+  document.getElementById('selectConfirm').disabled = false;
+}
+
+function confirmVessel() {
+  state.light = state.vessel.startLight;
+  state.dark = state.vessel.startDark;
+  state.health = 10;
+  state.points = 0;
+  state.depth = 1;
+  state.currency = 3;
+  goTo('staging');
+}
+
+// ---- STAGING ----
+function renderStaging() {
+  const c = document.getElementById('stagingContent');
+  c.innerHTML = `
+    <div class="theology-line">Prepare for the descent.</div>
+    <div class="staging-stat-row">
+      <span class="staging-stat-label">Vessel</span>
+      <span class="staging-stat-value" style="color:${state.vessel.color}">${state.vessel.name}</span>
+    </div>
+    <div class="staging-stat-row">
+      <span class="staging-stat-label">Health</span>
+      <span class="staging-stat-value" style="color:var(--success)">${state.health} / ${state.maxHealth}</span>
+    </div>
+    <div class="staging-stat-row" style="display:flex;gap:16px">
+      <div style="flex:1;display:flex;justify-content:space-between;align-items:center">
+        <span class="staging-stat-label">Light</span>
+        <span class="staging-stat-value" style="color:var(--light)">${state.light}</span>
+      </div>
+      <div style="flex:1;display:flex;justify-content:space-between;align-items:center">
+        <span class="staging-stat-label">Dark</span>
+        <span class="staging-stat-value" style="color:var(--dark)">${state.dark}</span>
+      </div>
+    </div>
+    <div class="staging-stat-row">
+      <span class="staging-stat-label">Currency</span>
+      <span class="staging-stat-value" style="color:var(--amber)">${state.currency}</span>
+    </div>
+    <div class="section-label" style="margin-top:8px">Actions</div>
+    <div class="staging-action-row">
+      <button class="staging-btn" onclick="healAction()" ${state.health >= state.maxHealth || state.currency < 1 ? 'disabled' : ''}>
+        Heal +3 HP
+        <span class="cost">Cost: 1</span>
+      </button>
+      <button class="staging-btn" onclick="boostAction()" ${state.currency < 2 ? 'disabled' : ''}>
+        Boost +1 L/D
+        <span class="cost">Cost: 2</span>
+      </button>
+    </div>
+  `;
+}
+
+function healAction() {
+  if (state.currency >= 1 && state.health < state.maxHealth) {
+    state.currency--;
+    state.health = Math.min(state.maxHealth, state.health + 3);
+    renderStaging();
+  }
+}
+
+function boostAction() {
+  if (state.currency >= 2) {
+    state.currency -= 2;
+    state.light++;
+    state.dark++;
+    renderStaging();
+  }
+}
+
+// ---- DRAFT ----
+function renderDraft() {
+  document.getElementById('draftLight').textContent = state.light;
+  document.getElementById('draftDark').textContent = state.dark;
+
+  const lCards = shuffle([...cardPool.light]).slice(0, 2);
+  const dCards = shuffle([...cardPool.dark]).slice(0, 2);
+  let picked = 0;
+  const maxPicks = 2;
+
+  const c = document.getElementById('draftContent');
+  c.innerHTML = `
+    <div class="theology-line">The Keepers present their offerings.</div>
+    <div class="keeper-section">
+      <div class="keeper-header">
+        <span class="keeper-name" style="color:var(--light)">The Surveyor</span>
+        <span class="keeper-tag" style="border-color:var(--light)40;color:var(--light)">Light</span>
+      </div>
+      ${lCards.map((card, i) => `
+        <div class="draft-card" id="lcard-${i}" onclick="pickCard('light',${i},'lcard-${i}')">
+          <span class="draft-card-name">${card.name}</span>
+          <span class="draft-card-effect" style="color:var(--light)">${card.effect}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="keeper-section">
+      <div class="keeper-header">
+        <span class="keeper-name" style="color:var(--dark)">The Smuggler</span>
+        <span class="keeper-tag" style="border-color:var(--dark)40;color:var(--dark)">Dark</span>
+      </div>
+      ${dCards.map((card, i) => `
+        <div class="draft-card" id="dcard-${i}" onclick="pickCard('dark',${i},'dcard-${i}')">
+          <span class="draft-card-name">${card.name}</span>
+          <span class="draft-card-effect" style="color:var(--dark)">${card.effect}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div style="text-align:center;font-size:8px;color:var(--dim);margin-top:4px">Pick ${maxPicks} cards</div>
+  `;
+
+  state.hand = [];
+  window._draftCards = { light: lCards, dark: dCards };
+  window._draftPicked = 0;
+  window._draftMax = maxPicks;
+  document.getElementById('draftDone').disabled = true;
+
+  window.pickCard = function(type, idx, elId) {
+    if (window._draftPicked >= window._draftMax) return;
+    const card = window._draftCards[type][idx];
+    state.hand.push(card);
+    state.light += card.light || 0;
+    state.dark += card.dark || 0;
+    if (card.heal) state.health = Math.min(state.maxHealth, state.health + card.heal);
+    if (card.points) state.points += card.points;
+    document.getElementById(elId).classList.add('picked');
+    document.getElementById('draftLight').textContent = state.light;
+    document.getElementById('draftDark').textContent = state.dark;
+    window._draftPicked++;
+    if (window._draftPicked >= window._draftMax) {
+      document.getElementById('draftDone').disabled = false;
+    }
+  };
+}
+
+// ---- LEVEL ----
+let levelTimer = null;
+let levelTimeLeft = 0;
+
+function startLevel() {
+  document.getElementById('levelLight').textContent = state.light;
+  document.getElementById('levelDark').textContent = state.dark;
+  document.getElementById('levelPoints').textContent = state.points;
+  document.getElementById('levelDepthLabel').textContent = `Depth ${state.depth}`;
+  document.getElementById('levelTitle').textContent = levelNames[state.depth - 1] || `Depth ${state.depth}`;
+  document.getElementById('levelTypeTag').textContent = levelTypes[state.depth - 1] || 'Encounter';
+
+  const hp = (state.health / state.maxHealth) * 100;
+  const hf = document.getElementById('healthFill');
+  hf.style.width = hp + '%';
+  hf.className = 'health-fill' + (hp <= 30 ? ' low' : '');
+
+  // Depth pips
+  const dm = document.getElementById('depthMeter');
+  dm.innerHTML = '';
+  for (let i = 1; i <= state.maxDepth; i++) {
+    const pip = document.createElement('div');
+    pip.className = 'depth-pip' + (i < state.depth ? ' reached' : i === state.depth ? ' current' : '');
+    dm.appendChild(pip);
+  }
+
+  // Load mini-game: tap puzzle
+  const slot = document.getElementById('gameSlot');
+  slot.innerHTML = '<div class="tap-area" id="tapArea"></div>';
+  const tapArea = document.getElementById('tapArea');
+
+  for (let i = 0; i < 9; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'tap-cell';
+    cell.dataset.idx = i;
+    cell.addEventListener('click', () => tapCell(i));
+    tapArea.appendChild(cell);
+  }
+
+  // Timer
+  levelTimeLeft = 100;
+  document.getElementById('timerFill').style.width = '100%';
+  document.getElementById('timerFill').className = 'timer-fill';
+
+  if (levelTimer) clearInterval(levelTimer);
+
+  let litCell = -1;
+  let gameActive = true;
+  let tapsNeeded = 5 + state.depth * 2;
+  let tapsHit = 0;
+
+  function lightRandom() {
+    if (!gameActive) return;
+    const cells = tapArea.querySelectorAll('.tap-cell');
+    cells.forEach(c => { c.className = 'tap-cell'; c.textContent = ''; });
+    litCell = Math.floor(Math.random() * 9);
+    const isLight = Math.random() > 0.5;
+    cells[litCell].className = 'tap-cell ' + (isLight ? 'lit' : 'dark-lit');
+    cells[litCell].textContent = isLight ? '✦' : '◆';
+    cells[litCell].dataset.type = isLight ? 'light' : 'dark';
+  }
+
+  window.tapCell = function(idx) {
+    if (!gameActive) return;
+    const cells = tapArea.querySelectorAll('.tap-cell');
+    if (idx === litCell) {
+      const type = cells[idx].dataset.type;
+      cells[idx].className = 'tap-cell hit';
+      cells[idx].textContent = '✓';
+      tapsHit++;
+      state.points += (state.depth);
+      if (type === 'light') state.light++;
+      else state.dark++;
+      document.getElementById('levelLight').textContent = state.light;
+      document.getElementById('levelDark').textContent = state.dark;
+      document.getElementById('levelPoints').textContent = state.points;
+
+      if (tapsHit >= tapsNeeded) {
+        gameActive = false;
+        clearInterval(levelTimer);
+        applyVesselBonus();
+        setTimeout(() => goTo('door'), 600);
+      } else {
+        setTimeout(lightRandom, 300);
+      }
+    } else {
+      cells[idx].className = 'tap-cell miss';
+      cells[idx].textContent = '✗';
+      state.health--;
+      const hp2 = (state.health / state.maxHealth) * 100;
+      const hf2 = document.getElementById('healthFill');
+      hf2.style.width = hp2 + '%';
+      hf2.className = 'health-fill' + (hp2 <= 30 ? ' low' : '');
+
+      if (state.health <= 0) {
+        gameActive = false;
+        clearInterval(levelTimer);
+        setTimeout(() => goTo('drop'), 600);
+      }
+      setTimeout(() => { if (gameActive) { cells[idx].className = 'tap-cell'; cells[idx].textContent = ''; }}, 200);
+    }
+  };
+
+  levelTimer = setInterval(() => {
+    if (!gameActive) return;
+    levelTimeLeft -= 1.5;
+    const tf = document.getElementById('timerFill');
+    tf.style.width = Math.max(0, levelTimeLeft) + '%';
+    if (levelTimeLeft <= 30) tf.className = 'timer-fill urgent';
+
+    if (levelTimeLeft <= 0) {
+      gameActive = false;
+      clearInterval(levelTimer);
+      applyVesselBonus();
+      setTimeout(() => goTo('door'), 400);
+    }
+  }, 100);
+
+  setTimeout(lightRandom, 500);
+}
+
+function applyVesselBonus() {
+  if (!state.vessel) return;
+  switch(state.vessel.levelBonus) {
+    case 'light': state.light++; break;
+    case 'dark': state.dark++; break;
+    case 'heal': state.health = Math.min(state.maxHealth, state.health + 1); break;
+    case 'points': state.points += 2; break;
+    case 'choice': state.light++; break; // auto for prototype
+  }
+}
+
+// ---- DOOR ----
+function renderDoor() {
+  if (levelTimer) clearInterval(levelTimer);
+
+  document.getElementById('doorLight').textContent = state.light;
+  document.getElementById('doorDark').textContent = state.dark;
+
+  const lightReq = state.depth + 1;
+  const darkReq = state.depth + 1;
+  const secretReq = state.depth * 2;
+  const canLight = state.light >= lightReq;
+  const canDark = state.dark >= darkReq;
+  const canSecret = (state.light + state.dark) >= secretReq;
+
+  const c = document.getElementById('doorContent');
+  c.innerHTML = `
+    <div class="theology-line">Each door leads forward. Only some are open to you.</div>
+    <div class="section-label">Available Paths — Depth ${state.depth + 1}</div>
+    <div class="door-option ${canLight ? '' : 'locked'}" onclick="chooseDoor('light')" style="margin-bottom:8px;${canLight ? 'border-color:var(--light)30' : ''}">
+      <div class="door-option-name" style="color:var(--light)">Path of Light</div>
+      <div class="door-option-desc">A corridor of sanctified luminescence</div>
+      <div class="door-cost">Requires: <span class="required" style="color:var(--light)">${lightReq} Light</span> ${canLight ? '✓' : '— locked'}</div>
+    </div>
+    <div class="door-option ${canDark ? '' : 'locked'}" onclick="chooseDoor('dark')" style="margin-bottom:8px;${canDark ? 'border-color:var(--dark)30' : ''}">
+      <div class="door-option-name" style="color:var(--dark)">Path of Shadow</div>
+      <div class="door-option-desc">A passage shrouded in twilight</div>
+      <div class="door-cost">Requires: <span class="required" style="color:var(--dark)">${darkReq} Dark</span> ${canDark ? '✓' : '— locked'}</div>
+    </div>
+    <div class="door-option ${canSecret ? '' : 'locked'}" onclick="chooseDoor('secret')" style="margin-bottom:8px;${canSecret ? 'border-color:var(--amber)30' : ''}">
+      <div class="door-option-name" style="color:var(--amber)">Secret Door</div>
+      <div class="door-option-desc">Requires mastery of both paths</div>
+      <div class="door-cost">Requires: <span class="required" style="color:var(--amber)">${secretReq} Combined</span> ${canSecret ? '✓' : '— locked'}</div>
+    </div>
+    ${!canLight && !canDark && !canSecret ? `
+      <div style="text-align:center;padding:16px 0">
+        <button class="btn btn-danger" onclick="goTo('drop')">No doors open — Drop</button>
+      </div>
+    ` : ''}
+  `;
+
+  window.chooseDoor = function(type) {
+    state.depth++;
+    if (state.depth > state.maxDepth) {
+      goTo('drop');
+    } else {
+      goTo('draft');
+    }
+  };
+}
+
+// ---- DROP ----
+function renderDrop() {
+  if (levelTimer) clearInterval(levelTimer);
+  state.runs++;
+  const survived = state.health > 0;
+  const c = document.getElementById('dropContent');
+  c.innerHTML = `
+    <div class="theology-line">${survived ? 'You reached the bottom. The record is written.' : 'The Depth claimed you. But the record remains.'}</div>
+    <div class="section-label">Run Summary</div>
+    <div class="drop-summary">
+      <div class="drop-stat">
+        <span class="drop-stat-label">Vessel</span>
+        <span class="drop-stat-value" style="color:${state.vessel.color}">${state.vessel.name}</span>
+      </div>
+      <div class="drop-stat">
+        <span class="drop-stat-label">Depth Reached</span>
+        <span class="drop-stat-value">${state.depth} / ${state.maxDepth}</span>
+      </div>
+      <div class="drop-stat">
+        <span class="drop-stat-label">Points</span>
+        <span class="drop-stat-value">${state.points}</span>
+      </div>
+      <div class="drop-stat">
+        <span class="drop-stat-label">Final Parity</span>
+        <span class="drop-stat-value"><span style="color:var(--light)">${state.light}L</span> / <span style="color:var(--dark)">${state.dark}D</span></span>
+      </div>
+      <div class="drop-stat">
+        <span class="drop-stat-label">Status</span>
+        <span class="drop-stat-value" style="color:${survived ? 'var(--success)' : 'var(--danger)'}">${survived ? 'SURVIVED' : 'FALLEN'}</span>
+      </div>
+      <div class="drop-stat">
+        <span class="drop-stat-label">Total Runs</span>
+        <span class="drop-stat-value">${state.runs}</span>
+      </div>
+    </div>
+    <div class="section-label" style="margin-top:12px">Unlocked</div>
+    <div>
+      ${state.points >= 10 ? '<span class="unlock-badge">+1 Currency</span>' : ''}
+      ${state.depth >= 3 ? '<span class="unlock-badge">Scar: Fragile</span>' : ''}
+      ${state.depth >= 5 ? '<span class="unlock-badge">Boon: Deep Memory</span>' : ''}
+      ${state.points < 10 && state.depth < 3 ? '<span style="font-size:9px;color:var(--dim)">No new unlocks this run.</span>' : ''}
+    </div>
+  `;
+}
+
+function resetGame() {
+  state.health = 10;
+  state.light = state.vessel.startLight;
+  state.dark = state.vessel.startDark;
+  state.points = 0;
+  state.depth = 1;
+  state.currency = Math.min(5, state.currency + (state.points >= 10 ? 1 : 0) + 2);
+  state.hand = [];
+  goTo('staging');
+}
+
+// ---- UTIL ----
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+</script>
+</body>
+</html>

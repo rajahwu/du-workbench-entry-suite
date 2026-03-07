@@ -12,23 +12,23 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 | STATE | SCREEN NAME | ENTRY EVENT | NOTES |
 | :---- | :---- | :---- | :---- |
-| TITLE | Enter Dudael | App load / Return to Staging | Redux store warm: user (guest), settings, identity, local storage. \#0D0E12 background. |
-| CHARACTER\_SELECT | Choose Vessel | "Start / Exchange" | Vessel determines: starting Light/Dark, health, hand size, draft bias. Lock Vessel → Penitent reading lore → Insight. Five sigils: Seraph, Shadow, Exile, Penitent, Rebel. |
-| STAGING | Locker Room | "Lock Vessel" | Vessel, depth, loops, parity meters displayed. Engine \+ COD2 panels. Lore stack (codex). Penitent: 2–3 seconds reading → \+1 Insight (cap 3). Rebel: Dark \> 3 → Instability shown. Initiate Draft button. |
-| CARD\_DRAFT | Light & Dark Guides | "Initiate Draft" | Surveyor (Light) \+ Smuggler (Dark) child guides. Cards condense, grid materializes (\~500ms slide). Draft shapes next Level difficulty. Insight counter active for Penitent. |
-| LEVEL\_PLAY | The Descent | "Cards Picked" | Timer bar \+ Light/Dark bar. Grid mini-game container. Rebel \= glass cannon. Penitent \= endurance. Grid fades → three doors rise from bottom on success. Grid cracks → red flash → spiral fall on death/timeout. |
-| DOOR | Three Paths | "Level Complete" | Three doors: Light (white), Dark (dark), Secret (purple — appears at parity extreme). Door costs scale by depth. DOOR → STAGING \+ depth increment on pass. |
-| DROP | Dudael Drop | "Door Failed" or death | \~800ms spiral \+ \~300ms fade. Run Summary: Vessel, Depth reached, Points, Final parity, Confessions \+1, Breach \+1. Unlocked lore card shown. Return to Staging → locker room richer. |
+| TITLE | Enter Dudael | App load / Return to Staging | Redux store warm: user (guest), settings, identity, local storage. #0D0E12 background. |
+| CHARACTER_SELECT | Choose Vessel | "Start / Exchange" | Vessel determines: starting Light/Dark, health, hand size, draft bias. Lock Vessel → Penitent reading lore → Insight. Five sigils: Seraph, Shadow, Exile, Penitent, Rebel. |
+| STAGING | Locker Room | "Lock Vessel" | Vessel, depth, loops, parity meters displayed. Engine + COD2 panels. Lore stack (codex). Penitent: 2–3 seconds reading → +1 Insight (cap 3). Rebel: Dark > 3 → Instability shown. Initiate Draft button. |
+| CARD_DRAFT | Light & Dark Guides | "Initiate Draft" | Surveyor (Light) + Smuggler (Dark) child guides. Cards condense, grid materializes (~500ms slide). Draft shapes next Level difficulty. Insight counter active for Penitent. |
+| LEVEL_PLAY | The Descent | "Cards Picked" | Timer bar + Light/Dark bar. Grid mini-game container. Rebel = glass cannon. Penitent = endurance. Grid fades → three doors rise from bottom on success. Grid cracks → red flash → spiral fall on death/timeout. |
+| DOOR | Three Paths | "Level Complete" | Three doors: Light (white), Dark (dark), Secret (purple — appears at parity extreme). Door costs scale by depth. DOOR → STAGING + depth increment on pass. |
+| DROP | Dudael Drop | "Door Failed" or death | ~800ms spiral + ~300ms fade. Run Summary: Vessel, Depth reached, Points, Final parity, Confessions +1, Breach +1. Unlocked lore card shown. Return to Staging → locker room richer. |
 
 ### **Transition Animations (from screen map)**
 
 | FROM | TO | ANIMATION |
 | :---- | :---- | :---- |
-| TITLE | CHARACTER\_SELECT | Hard cut, forensic reveal, \~300ms fade |
-| CHARACTER\_SELECT | STAGING | Slide transition, vessel carries forward, \~500ms slide |
-| STAGING | CARD\_DRAFT | Cards condense, grid materializes, \~500ms slide → Fade to center, guides emerge, \~300ms fade |
-| CARD\_DRAFT | LEVEL\_PLAY | Grid fades → three doors rise from bottom (success). Grid cracks → red flash → spiral fall (death) |
-| LEVEL\_PLAY | DOOR | Door opens, light wash, \~800ms spiral, \~300ms fade |
+| TITLE | CHARACTER_SELECT | Hard cut, forensic reveal, ~300ms fade |
+| CHARACTER_SELECT | STAGING | Slide transition, vessel carries forward, ~500ms slide |
+| STAGING | CARD_DRAFT | Cards condense, grid materializes, ~500ms slide → Fade to center, guides emerge, ~300ms fade |
+| CARD_DRAFT | LEVEL_PLAY | Grid fades → three doors rise from bottom (success). Grid cracks → red flash → spiral fall (death) |
+| LEVEL_PLAY | DOOR | Door opens, light wash, ~800ms spiral, ~300ms fade |
 | DOOR/DROP | STAGING | Fade up, locker room richer (meta counters written) |
 
 # **II. STATE FLOW & DATA PIPELINE**
@@ -44,7 +44,7 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 | After DRAFT | { ...packet, meta: { draftedCards, paritySnapshot } } | Cards written to packet. Parity snapshot recorded here — checked again at Door. |
 | After LEVEL | { ...packet, meta: { ...meta, levelResult } } | Health decremented, points incremented, Light/Dark adjusted from hits. |
 | After DOOR | { ...packet, meta: { ...meta, doorChoice } } | Door choice recorded. Light or Dark decremented as cost. |
-| After DROP | Packet resets to SELECT \+ loopCount | Meta counters → localStorage. Insight/Instability calculated on-the-fly, not stored long-term. |
+| After DROP | Packet resets to SELECT + loopCount | Meta counters → localStorage. Insight/Instability calculated on-the-fly, not stored long-term. |
 
 ## **Redux State Mutations Per Phase**
 
@@ -60,7 +60,7 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 * Insight and Instability are calculated on-the-fly from current run behavior — not stored long-term. They are derived state, not persisted state.
 
-* Parity snapshot is taken at the end of CARD\_DRAFT and checked again at DOOR. The gap between snapshot and door choice creates tension.
+* Parity snapshot is taken at the end of CARD_DRAFT and checked again at DOOR. The gap between snapshot and door choice creates tension.
 
 * Meta counters (Confessions, Breach, loopCount, unlocked lore) persist across runs in localStorage.
 
@@ -75,12 +75,12 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 | Seraph | Highest order | High Light, Low Dark | Root-Whisper Stability cost doubled. Proximity to Light before the fall means the Dark voices are most destabilizing. Sees card lore with theological depth. |
 | Shadow | Concealment | Balanced, high Stealth | Absorbs Risk cards — Stability cost negated on CORRUPTION cards. Moves through Dudael via absence rather than force. |
 | Exile | Cast out | Balanced | Was removed, not fallen. Creates distinct relationship to the zone. Mechanics TBD — distinct from both choice-based and slip-based vessels. |
-| Penitent | Seeking | High Endurance, moderate stats | Reading lore in Staging → \+1 Insight (cap 3, \~2–3 seconds per entry). Insight drives card visibility. Confessions \+1 on drop when Light \> 1\. Endurance mechanic in Level Play. |
-| Rebel | Chose the fall | High risk/reward, glass cannon | Dark \> Light+3 → Instability visual appears, cheaper Dark doors. Breach \+1 on drop when Dark \> Light+3. High reward and high failure risk. May have Insight penalties. |
+| Penitent | Seeking | High Endurance, moderate stats | Reading lore in Staging → +1 Insight (cap 3, ~2–3 seconds per entry). Insight drives card visibility. Confessions +1 on drop when Light > 1. Endurance mechanic in Level Play. |
+| Rebel | Chose the fall | High risk/reward, glass cannon | Dark > Light+3 → Instability visual appears, cheaper Dark doors. Breach +1 on drop when Dark > Light+3. High reward and high failure risk. May have Insight penalties. |
 
 # **IV. SYSTEMS MAP — LIGHT, DARK & META-PROGRESSION**
 
-*Causal loop diagram. R \= Reinforcing loop (compounds over time). B \= Balancing loop (self-correcting). \+ \= increases, \- \= decreases.*
+*Causal loop diagram. R = Reinforcing loop (compounds over time). B = Balancing loop (self-correcting). + = increases, - = decreases.*
 
 ## **Core Variables**
 
@@ -91,7 +91,7 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 | Parity Balance | Ratio of Light to Dark. Determines door costs, success probability, secret threshold. |
 | Depth Level | Current descent depth. Scales door costs and success probability. Resets on DROP. |
 | Insight (Penitent) | 0–3. Derived from lore reading behavior. Controls card visibility in Draft. |
-| Instability (Rebel) | Triggered when Dark \> Light+3. Visual indicator. Enables cheaper Dark doors, higher risk. |
+| Instability (Rebel) | Triggered when Dark > Light+3. Visual indicator. Enables cheaper Dark doors, higher risk. |
 | Draft Pool Composition | Light/Dark card ratio in pool. Driven by vessel bias and parity state. |
 | Card Visibility | How much mechanical info the player sees per card. Controlled by Insight. |
 | Door Costs | Light or Dark required to pass a door. Scales with depth. |
@@ -102,31 +102,31 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 ### **R1 — The Lore Loop**
 
-* Reading Lore in Staging → \+Insight
+* Reading Lore in Staging → +Insight
 
-* Insight → \+Card Visibility → Better card picks
+* Insight → +Card Visibility → Better card picks
 
-* Better picks → \+Light Parity → \+Door Success
+* Better picks → +Light Parity → +Door Success
 
-* Door success → \+Depth → More lore available → More reading
+* Door success → +Depth → More lore available → More reading
 
 *Primary progression loop for Penitent. Rewards engagement with the codex. Self-reinforcing across runs as Staging Area richness grows.*
 
 ### **R2 — The Dark Spiral**
 
-* High Dark → \+Instability
+* High Dark → +Instability
 
-* Instability → \+Secret Doors available → \+Breach Unlocks
+* Instability → +Secret Doors available → +Breach Unlocks
 
-* Breach unlocks → \+Dark cards in pool → Encourages more Dark
+* Breach unlocks → +Dark cards in pool → Encourages more Dark
 
 *Primary progression loop for Rebel. High risk, high reward. Self-reinforcing but also drives toward DROP faster. Breach counter persists across runs.*
 
 ### **R3 — The Meta Loop**
 
-* Failed runs → \+Meta counters (Confessions, Breach)
+* Failed runs → +Meta counters (Confessions, Breach)
 
-* Meta counters → \+Starting Knowledge
+* Meta counters → +Starting Knowledge
 
 * Starting knowledge → Better early choices → Better run outcomes
 
@@ -136,15 +136,15 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 ### **B1 — Depth Cost Escalation**
 
-* \+Depth → \+Door Costs → \-Success Rate → DROP → Reset Depth
+* +Depth → +Door Costs → -Success Rate → DROP → Reset Depth
 
-* DROP → \-Instability Bonuses → \-Reward Spikes
+* DROP → -Instability Bonuses → -Reward Spikes
 
 *Prevents infinite depth runs. The deeper you go, the harder it gets. Eventually the system resets.*
 
 ### **B2 — Light Parity Correction**
 
-* \+Light Parity → \-Dark Cards in Draft Pool
+* +Light Parity → -Dark Cards in Draft Pool
 
 * Fewer Dark cards → Slower Dark accumulation → Parity stabilizes
 
@@ -152,7 +152,7 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 ### **B3 — Dark Parity Cost**
 
-* \+Dark Parity → Expensive Light Doors → Forces Dark Path → \+Risk
+* +Dark Parity → Expensive Light Doors → Forces Dark Path → +Risk
 
 *Dark-biased players find Light doors increasingly costly. They're locked into the darker path — higher reward, higher failure risk.*
 
@@ -169,10 +169,10 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 | COUNTER | TRIGGER | EFFECT |
 | :---- | :---- | :---- |
-| Confessions | Penitent: Insight \> 0 when Light \> 1 at DROP | Persists in localStorage. Unlocks lore entries. Enriches Staging Area on return. |
-| Breach | Rebel: Dark \> Light+3 at DROP | Persists in localStorage. Unlocks dark lore, Breach-specific cards. Encourages deeper Dark runs. |
+| Confessions | Penitent: Insight > 0 when Light > 1 at DROP | Persists in localStorage. Unlocks lore entries. Enriches Staging Area on return. |
+| Breach | Rebel: Dark > Light+3 at DROP | Persists in localStorage. Unlocks dark lore, Breach-specific cards. Encourages deeper Dark runs. |
 | Loop Count | Every DROP → Return to Staging | Tracks total runs. Staging Area richness scales with loopCount. |
-| Codex Entries | Lore read \+ drop survival | Unlocked entries available in Staging on future runs. |
+| Codex Entries | Lore read + drop survival | Unlocked entries available in Staging on future runs. |
 
 # **V. CARD SYSTEM SUMMARY**
 
@@ -183,10 +183,10 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 | INSIGHT | LABEL | VISIBLE FIELDS |
 | :---- | :---- | :---- |
 | 0 | No lore read | Name, Keeper attribution, Lore text, Quote. Pure narrative choice — pick based on vibes and theology. |
-| 1 | Some lore | \+ Primary delta (dominant Light ☀ or Dark ◆ icon \+ number). Math visible, still mysterious about costs. |
-| 2 | Moderate lore | \+ Secondary deltas \+ Effect summary strip. Full economy visible. Can make informed parity decisions. |
-| 3 | Deep lore | \+ Tags (STABILITY, RISK, etc.) \+ Strategic hint \+ Quote attribution \+ Vessel interaction. Theory-craft builds. |
-| Unlocked | Condition met | Additional mechanic revealed. Requires: lore\_entry, vessel\_depth, keeper\_favor, run\_count, card\_history, or parity\_extreme. |
+| 1 | Some lore | + Primary delta (dominant Light ☀ or Dark ◆ icon + number). Math visible, still mysterious about costs. |
+| 2 | Moderate lore | + Secondary deltas + Effect summary strip. Full economy visible. Can make informed parity decisions. |
+| 3 | Deep lore | + Tags (STABILITY, RISK, etc.) + Strategic hint + Quote attribution + Vessel interaction. Theory-craft builds. |
+| Unlocked | Condition met | Additional mechanic revealed. Requires: lore_entry, vessel_depth, keeper_favor, run_count, card_history, or parity_extreme. |
 
 ## **Card Tags**
 
@@ -205,7 +205,7 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 **4A — Approach:** Keeper introduction. Keeper dialogue reflects pool contents via keeperSignal. Player sees parity state and vessel alignment reminder. No action — ceremonial space.
 
-**4B — Offering:** Cards rendered with visibility matched to Insight. Pick 2\. Hover states: Light \= golden glow, Dark \= purple glow. Optional reroll (cost TBD — may be vessel-specific).
+**4B — Offering:** Cards rendered with visibility matched to Insight. Pick 2. Hover states: Light = golden glow, Dark = purple glow. Optional reroll (cost TBD — may be vessel-specific).
 
 **4C — Reckoning:** Parity preview after card deltas: Light X→X+Δ, Dark Y→Y+Δ. Keeper commentary — conditional on card combination, vessel match, and insight level. Stakes shown before Level entry.
 
@@ -229,6 +229,6 @@ Sinerine  ·  Radiant Seven Ecosystem  ·  V-00
 
 * Title screen exit: Red dot top right or equivalent. Front door needs a way back out.
 
-*Compiled from design sessions — Week of Feb 24–25 \+ Mar 1, 2026*
+*Compiled from design sessions — Week of Feb 24–25 + Mar 1, 2026*
 
 Radiant Seven Ecosystem  ·  Sinerine — The Dudael Drop  ·  V-00

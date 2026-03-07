@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="rebelGlow" cx="50%" cy="50%" r="35%">
+      <stop offset="0%" stop-color="#8B2D3A" stop-opacity="0.3"/>
+      <stop offset="60%" stop-color="#8B2D3A" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#8B2D3A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="spectralBandRebel" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8B2D3A" stop-opacity="0"/>
+      <stop offset="15%" stop-color="#8B2D3A" stop-opacity="0.7"/>
+      <stop offset="45%" stop-color="#C04050" stop-opacity="1"/>
+      <stop offset="55%" stop-color="#C04050" stop-opacity="1"/>
+      <stop offset="85%" stop-color="#8B2D3A" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#8B2D3A" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" fill="#0D0E12"/>
+  
+  <line x1="200" y1="0" x2="200" y2="400" stroke="#1A1C24" stroke-width="0.5"/>
+  <line x1="0" y1="200" x2="400" y2="200" stroke="#1A1C24" stroke-width="0.5"/>
+  <line x1="100" y1="0" x2="100" y2="400" stroke="#1A1C24" stroke-width="0.3"/>
+  <line x1="300" y1="0" x2="300" y2="400" stroke="#1A1C24" stroke-width="0.3"/>
+  <line x1="0" y1="100" x2="400" y2="100" stroke="#1A1C24" stroke-width="0.3"/>
+  <line x1="0" y1="300" x2="400" y2="300" stroke="#1A1C24" stroke-width="0.3"/>
+
+  <circle cx="200" cy="200" r="150" fill="url(#rebelGlow)"/>
+
+  <!-- Containment rings - breached -->
+  <circle cx="200" cy="200" r="140" fill="none" stroke="#2A2D38" stroke-width="0.5"/>
+  <circle cx="200" cy="200" r="120" fill="none" stroke="#8B2D3A" stroke-width="0.3" stroke-opacity="0.3"/>
+  <!-- Primary ring: cracked / breached at two points -->
+  <path d="M 200 100 A 100 100 0 0 1 290 230" fill="none" stroke="#8B2D3A" stroke-width="0.8" stroke-opacity="0.7"/>
+  <path d="M 280 250 A 100 100 0 0 1 110 230" fill="none" stroke="#8B2D3A" stroke-width="0.8" stroke-opacity="0.7"/>
+  <path d="M 108 215 A 100 100 0 0 1 195 100" fill="none" stroke="#8B2D3A" stroke-width="0.8" stroke-opacity="0.7"/>
+  <circle cx="200" cy="200" r="60" fill="none" stroke="#8B2D3A" stroke-width="0.4" stroke-opacity="0.5"/>
+
+  <!-- Rebel geometry: upward-pointing chevron / broken arrow (defiance, ascent against order) -->
+  <g filter="url(#softGlow)">
+    <!-- Primary upward chevron -->
+    <polyline points="130,260 200,130 270,260" fill="none" stroke="#C04050" stroke-width="0.8" stroke-opacity="0.6"/>
+    <!-- Secondary inner chevron -->
+    <polyline points="155,240 200,160 245,240" fill="none" stroke="#8B2D3A" stroke-width="0.5" stroke-opacity="0.4"/>
+    
+    <!-- Fracture lines radiating from apex -->
+    <line x1="200" y1="130" x2="200" y2="85" stroke="#C04050" stroke-width="0.5" stroke-opacity="0.5"/>
+    <line x1="200" y1="130" x2="175" y2="95" stroke="#C04050" stroke-width="0.3" stroke-opacity="0.3"/>
+    <line x1="200" y1="130" x2="225" y2="95" stroke="#C04050" stroke-width="0.3" stroke-opacity="0.3"/>
+  </g>
+
+  <!-- Diagonal slash marks - violence, breach -->
+  <g stroke="#8B2D3A" stroke-width="0.4" stroke-opacity="0.25">
+    <line x1="280" y1="110" x2="295" y2="130"/>
+    <line x1="285" y1="115" x2="300" y2="135"/>
+    <line x1="105" y1="270" x2="120" y2="290"/>
+    <line x1="110" y1="275" x2="125" y2="295"/>
+  </g>
+
+  <!-- Central sigil: fractured star / broken seal -->
+  <g transform="translate(200,200)" filter="url(#softGlow)">
+    <!-- Broken containment circle -->
+    <path d="M 0,-15 A 15 15 0 0 1 13,7.5" fill="none" stroke="#C04050" stroke-width="0.8" stroke-opacity="0.7"/>
+    <path d="M 10,11 A 15 15 0 0 1 -13,7.5" fill="none" stroke="#C04050" stroke-width="0.8" stroke-opacity="0.7"/>
+    <path d="M -10,11 A 15 15 0 0 1 -3,-15" fill="none" stroke="#C04050" stroke-width="0.8" stroke-opacity="0.7"/>
+    
+    <!-- X mark - breach indicator -->
+    <line x1="-8" y1="-8" x2="8" y2="8" stroke="#C04050" stroke-width="1.2" stroke-opacity="0.8"/>
+    <line x1="8" y1="-8" x2="-8" y2="8" stroke="#C04050" stroke-width="1.2" stroke-opacity="0.8"/>
+    <!-- Central spark -->
+    <circle cx="0" cy="0" r="2" fill="#C04050" fill-opacity="0.9"/>
+  </g>
+
+  <!-- Tick marks -->
+  <g stroke="#8B2D3A" stroke-width="0.4" stroke-opacity="0.4">
+    <line x1="200" y1="96" x2="200" y2="104"/>
+    <line x1="200" y1="296" x2="200" y2="304"/>
+    <line x1="96" y1="200" x2="104" y2="200"/>
+    <line x1="296" y1="200" x2="304" y2="200"/>
+  </g>
+
+  <rect x="40" y="348" width="320" height="2" fill="url(#spectralBandRebel)" opacity="0.6"/>
+  
+  <text x="16" y="24" font-family="'JetBrains Mono', monospace" font-size="7" font-weight="300" fill="#4A4D58" letter-spacing="0.5">SIG-RBL-001</text>
+  <line x1="16" y1="28" x2="76" y2="28" stroke="#4A4D58" stroke-width="0.3"/>
+  <text x="384" y="24" font-family="'JetBrains Mono', monospace" font-size="7" font-weight="300" fill="#4A4D58" letter-spacing="0.5" text-anchor="end">LIGHT BIAS: LOW-MED</text>
+  <text x="16" y="384" font-family="'JetBrains Mono', monospace" font-size="7" font-weight="300" fill="#C04050" fill-opacity="0.5" letter-spacing="1">VESSEL CLASS</text>
+  <text x="16" y="394" font-family="'JetBrains Mono', monospace" font-size="8" font-weight="700" fill="#C04050" fill-opacity="0.8" letter-spacing="2">REBEL</text>
+  <text x="384" y="384" font-family="'Crimson Pro', serif" font-size="8" font-style="italic" fill="#6B7B8D" fill-opacity="0.5" text-anchor="end">the defiant ones</text>
+  <text x="384" y="394" font-family="'JetBrains Mono', monospace" font-size="6" font-weight="300" fill="#4A4D58" text-anchor="end">SINERINE // V-00</text>
+
+  <g stroke="#2A2D38" stroke-width="0.5">
+    <line x1="8" y1="8" x2="8" y2="32"/><line x1="8" y1="8" x2="32" y2="8"/>
+    <line x1="392" y1="8" x2="392" y2="32"/><line x1="392" y1="8" x2="368" y2="8"/>
+    <line x1="8" y1="392" x2="8" y2="368"/><line x1="8" y1="392" x2="32" y2="392"/>
+    <line x1="392" y1="392" x2="392" y2="368"/><line x1="392" y1="392" x2="368" y2="392"/>
+  </g>
+</svg>
