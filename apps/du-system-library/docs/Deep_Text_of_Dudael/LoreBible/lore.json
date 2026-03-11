@@ -1,0 +1,236 @@
+[
+    {
+        "id": "world.dudael",
+        "title": "Dudael — The Quarantine Zone",
+        "category": "world",
+        "type": "location",
+        "summary": "A sealed region of space in Echo and Void's sector, built to contain fallen angels as forensic evidence, not as a conventional prison."
+    },
+    {
+        "id": "world.echo_void_sector",
+        "title": "Echo and Void's Sector",
+        "category": "world",
+        "type": "region",
+        "summary": "The territory of Echo and Void, where Dudael hangs like a secured exhibit—watched, maintained, never opened casually."
+    },
+    {
+        "id": "world.spiral",
+        "title": "The Spiral",
+        "category": "world",
+        "type": "symbol",
+        "summary": "A grayscale gradient spiral on the title screen, doubling as the path down; read as Light-to-Dark or Dark-to-Light depending on player perspective."
+    },
+    {
+        "id": "world.drop",
+        "title": "The Drop",
+        "category": "world",
+        "type": "event",
+        "summary": "The moment a run ends, when the fallen are forced to reckon with what they chose—or what was done to them—converting failure into Memory Fragments."
+    },
+    {
+        "id": "theology.oiketerion",
+        "title": "Oikētērion",
+        "category": "theology",
+        "type": "concept",
+        "summary": "“Proper dwelling” or spiritual habitation; the station the angels abandoned, making them subject to Dudael's containment."
+    },
+    {
+        "id": "theology.watchers",
+        "title": "The Watchers",
+        "category": "theology",
+        "type": "faction",
+        "summary": "Rogue First Engineers who broke from their original function, their transgression echoing in the design of Solo descent and Dark relics."
+    },
+    {
+        "id": "theology.relics",
+        "title": "Relics (Dark Cards)",
+        "category": "theology",
+        "type": "artifact",
+        "summary": "Original artifacts from before the fall, now expressed as Dark cards that bend, conceal, or weaponize the rules of the descent."
+    },
+    {
+        "id": "theology.radiant_seven",
+        "title": "Radiant Seven Meta-Universe",
+        "category": "theology",
+        "type": "meta",
+        "summary": "A larger ecosystem where Dudael is one node; events in the Drop reverberate outward and are not self-contained."
+    },
+    {
+        "id": "bound.seraph",
+        "title": "Seraph",
+        "category": "bound",
+        "type": "vessel",
+        "tagline": "Once all Light, now blinded by fragments.",
+        "alignment_hint": "light",
+        "summary": "Highest-order angel whose proximity to Light was total before the fall; now navigates Dudael through partial blindness and memory of clarity."
+    },
+    {
+        "id": "bound.shadow",
+        "title": "Shadow",
+        "category": "bound",
+        "type": "vessel",
+        "tagline": "Not fallen—missing.",
+        "alignment_hint": "dark",
+        "summary": "Defines the fall as disappearance rather than descent, moving through Dudael by absence, concealment, and misdirection."
+    },
+    {
+        "id": "bound.exile",
+        "title": "Exile",
+        "category": "bound",
+        "type": "vessel",
+        "tagline": "Removed, not released.",
+        "alignment_hint": "threshold",
+        "summary": "Cast out instead of choosing to fall, carrying the weight of a sentence they did not select and a zone they did not seek."
+    },
+    {
+        "id": "bound.penitent",
+        "title": "Penitent",
+        "category": "bound",
+        "type": "vessel",
+        "tagline": "Reads what others run past.",
+        "alignment_hint": "insight",
+        "summary": "Seeks understanding or atonement, drawn to codex entries and lore; gains strength by engaging with what Dudael reveals."
+    },
+    {
+        "id": "bound.rebel",
+        "title": "Rebel",
+        "category": "bound",
+        "type": "vessel",
+        "tagline": "Set their habitation on fire.",
+        "alignment_hint": "hazard",
+        "summary": "Fell by choice, fully aware of the cost; embodies agency and instability, treating Dudael as a system to break rather than endure."
+    },
+    {
+        "id": "npc.surveyor",
+        "title": "The Light Guide — Surveyor",
+        "category": "npc",
+        "type": "guide",
+        "summary": "Child aligned with Light, tending an economy of clarity and revelation in the Staging Area and Draft."
+    },
+    {
+        "id": "npc.smuggler",
+        "title": "The Dark Guide — Smuggler",
+        "category": "npc",
+        "type": "guide",
+        "summary": "Child aligned with Dark, managing concealment, side deals, and relic trades behind the draft."
+    },
+    {
+        "id": "npc.staging_keepers",
+        "title": "Staging Keepers",
+        "category": "npc",
+        "type": "custodian",
+        "summary": "Surveyor and Smuggler maintain the locker room between runs, tracking what the runner reads, touches, and ignores."
+    },
+    {
+        "id": "room.title",
+        "title": "TITLE — The Void",
+        "category": "room",
+        "type": "phase",
+        "summary": "Entry chamber where the spiral appears and the house is already awake—systems live before the first click."
+    },
+    {
+        "id": "room.character_select",
+        "title": "CHARACTER SELECT — The Casting Hall",
+        "category": "room",
+        "type": "phase",
+        "summary": "Gallery of Sigils and profiles where the player first chooses what they inherit, then how they will carry it."
+    },
+    {
+        "id": "room.staging",
+        "title": "STAGING — Locker Room",
+        "category": "room",
+        "type": "phase",
+        "summary": "Quiet room between choosing and acting; initially empty, later filled with run history, unlocked lore, and vessel progression."
+    },
+    {
+        "id": "room.card_draft",
+        "title": "CARD DRAFT — The Children's Table",
+        "category": "room",
+        "type": "phase",
+        "summary": "Light and Dark guides offer cards; choices here silently construct the next level and tilt the Light/Dark scale."
+    },
+    {
+        "id": "room.level_play",
+        "title": "LEVEL PLAY — The Cartridge",
+        "category": "room",
+        "type": "phase",
+        "summary": "A neutral container that mounts different mini-games or puzzles, shaped by prior draft and staging behavior."
+    },
+    {
+        "id": "room.door",
+        "title": "DOOR — Divergence",
+        "category": "room",
+        "type": "phase",
+        "summary": "Three exits—Light, Dark, Secret—priced in parity and depth, where earlier choices are finally tallied."
+    },
+    {
+        "id": "room.drop",
+        "title": "DROP — The Fall Event",
+        "category": "room",
+        "type": "phase",
+        "summary": "End-of-run chamber where death is logged, Memory Fragments are minted, and the next descent is quietly prepared."
+    },
+    {
+        "id": "alignment.light",
+        "title": "Light",
+        "category": "alignment",
+        "type": "axis",
+        "summary": "Axis of clarity, revelation, and structure; a resource and a record of choices that exposed more than they hid."
+    },
+    {
+        "id": "alignment.dark",
+        "title": "Dark",
+        "category": "alignment",
+        "type": "axis",
+        "summary": "Axis of concealment, depth, and transformation; tracks choices that hid, bent, or submerged truth."
+    },
+    {
+        "id": "alignment.secret",
+        "title": "Secret / Threshold",
+        "category": "alignment",
+        "type": "axis",
+        "summary": "The synthesis state between Light and Dark, represented in doors and Sinerine's third color pole."
+    },
+    {
+        "id": "mechanic.parity",
+        "title": "Parity",
+        "category": "mechanic",
+        "type": "economy",
+        "summary": "The balance of Light and Dark across the run; snapshot after draft, checked at the Door, and amplified by depth."
+    },
+    {
+        "id": "meta.memory_fragments",
+        "title": "Memory Fragments",
+        "category": "meta",
+        "type": "currency",
+        "summary": "Shards of remembered descent earned on death, spent to change what waits in Staging on future runs."
+    },
+    {
+        "id": "meta.loop",
+        "title": "The Loop",
+        "category": "meta",
+        "type": "structure",
+        "summary": "The cycle Title → Select → Staging → Draft → Level → Door → Drop, where death feeds progression instead of erasing it."
+    },
+    {
+        "id": "meta.locker_room_accretion",
+        "title": "Locker Room Accretion",
+        "category": "meta",
+        "type": "progression",
+        "summary": "With each run, more history, codex entries, and vessel changes accumulate in Staging, turning a pass-through into a hub."
+    },
+    {
+        "id": "tone.forensic_theophany",
+        "title": "Forensic Theophany",
+        "category": "tone",
+        "type": "aesthetic",
+        "summary": "The mood of Dudael—clinical, examining, evidence under glass; the game presents and the player decides what it means."
+    },
+    {
+        "id": "brand.sinerine",
+        "title": "Sinerine",
+        "category": "brand",
+        "type": "design_system",
+        "summary": "The design language of Dudael—tri-polar palette, formal typography, and strict tokens that make the UI feel like a controlled experiment."
+    }
+]

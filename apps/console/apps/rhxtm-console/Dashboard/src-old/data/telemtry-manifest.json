@@ -1,0 +1,16 @@
+{
+    "session_id": "RS-20260208-02",
+    "he_billables": {
+        "units": 4.5,
+        "rate_modifier": "1.5x (High Energy)",
+        "total_value": "6.75 HEV"
+    },
+    "refinery": {
+        "writing_prompt": "Established persistent telemetry hooks between the React frontend and the local JSON manifest.",
+        "knowledge_check": {
+            "question": "What governs the Sinerein system?",
+            "answer": "The fact that it exists in its smallest absolute form.",
+            "result": "PASSED"
+        }
+    }
+}

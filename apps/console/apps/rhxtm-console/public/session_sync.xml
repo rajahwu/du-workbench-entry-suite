@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Session Sync Feed</title>
+    <link>http://localhost:3000/rhxtm-console/Dashboard/</link>
+    <description>Live feed of session entries from the logger database.</description>
+    <lastBuildDate>Tue, 10 Mar 2026 20:05:14 -0400</lastBuildDate>
+    <language>en-us</language>
+    <atom:link href="http://localhost:3000/rhxtm-console/public/session_sync.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>[RAJAH] Note: This is sample entry number 0 for session sample_s...</title>
+      <pubDate>Wed, 11 Mar 2026 00:05:09 -0400</pubDate>
+      <guid isPermaLink="false">entry_000</guid>
+      <description>This is sample entry number 0 for session sample_session_01.</description>
+    </item>
+    <item>
+      <title>[RAJAH] Note: This is sample entry number 1 for session sample_s...</title>
+      <pubDate>Wed, 11 Mar 2026 00:04:09 -0400</pubDate>
+      <guid isPermaLink="false">entry_001</guid>
+      <description>This is sample entry number 1 for session sample_session_01.</description>
+    </item>
+    <item>
+      <title>[RAJAH] Note: This is sample entry number 2 for session sample_s...</title>
+      <pubDate>Wed, 11 Mar 2026 00:03:09 -0400</pubDate>
+      <guid isPermaLink="false">entry_002</guid>
+      <description>This is sample entry number 2 for session sample_session_01.</description>
+    </item>
+    <item>
+      <title>[RAJAH] Note: This is sample entry number 3 for session sample_s...</title>
+      <pubDate>Wed, 11 Mar 2026 00:02:09 -0400</pubDate>
+      <guid isPermaLink="false">entry_003</guid>
+      <description>This is sample entry number 3 for session sample_session_01.</description>
+    </item>
+    <item>
+      <title>[RAJAH] Note: This is sample entry number 4 for session sample_s...</title>
+      <pubDate>Wed, 11 Mar 2026 00:01:09 -0400</pubDate>
+      <guid isPermaLink="false">entry_004</guid>
+      <description>This is sample entry number 4 for session sample_session_01.</description>
+    </item>
+  </channel>
+</rss>

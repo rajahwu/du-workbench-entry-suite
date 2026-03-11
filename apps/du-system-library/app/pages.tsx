@@ -1,4 +1,4 @@
-// apps/du-system-library/app/pags.tsx
+// apps/du-system-library/app/pages.tsx
 import React from 'react';
 // Assuming Vite handling of static assets
 import hero from '../../assets/identity/13304cc8-dcf1-40ff-82c8-8c83b2f33c77.png';

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Flowtrack — Session Spine</title>
+<style>
+  :root {
+    --bg-base: #000000;
+    --text-primary: #001aff21;
+    --text-secondary: #00CCCC;
+    --border-card: #d400ff;
+    --font-base: 'Courier New', monospace;
+    --space-sm: 8px;
+    --space-md: 16px;
+  }
+
+  body {
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-base);
+    margin: 0;
+    padding: var(--space-md);
+  }
+
+  .spine {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-card);
+    padding-bottom: var(--space-sm);
+  }
+
+  .left {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .right {
+    text-align: right;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .label {
+    color: var(--text-secondary);
+  }
+</style>
+</head>
+<body>
+
+<div class="spine">
+  <div class="left">FLOWTRACK LOGGER</div>
+  <div class="right">
+    <div><span class="label">SESSION:</span> FT-2026-01-11-1420</div>
+    <div><span class="label">SUBSYSTEM:</span> RDXT</div>
+    <div><span class="label">MODE:</span> VERBOSE</div>
+    <div><span class="label">FLAGS:</span> memory • asset • directive</div>
+  </div>
+</div>
+
+</body>
+</html>

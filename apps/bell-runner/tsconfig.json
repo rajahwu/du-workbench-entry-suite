@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@bell/engine": ["./engine/index.ts"],
+      "@bell/engine/*": ["./engine/*"]
+    }
+  },
+  "include": ["engine/**/*.ts", "web/**/*.ts", "web/**/*.tsx"],
+  "exclude": ["node_modules", "dist"]
+}

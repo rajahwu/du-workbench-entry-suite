@@ -1,0 +1,20 @@
+{
+   "domain_filter" : "",
+   "domain_root" : ".",
+   "dry_run" : true,
+   "entries" : [
+      {
+         "checksum" : "25947c4a9d4b4c7691d5639dd62612b1",
+         "dest" : "docs/docs/test-architecture-note.md",
+         "domain" : "docs",
+         "kind" : "protocol",
+         "slug" : "test-architecture-note",
+         "source" : "tree/docs/test-architecture-note.md",
+         "status" : "harvest-ready",
+         "timestamp" : "2026-03-10T02:33:51-0400",
+         "type" : "doc"
+      }
+   ],
+   "generated_at" : "2026-03-10T02:33:51-0400",
+   "source_root" : "tree"
+}

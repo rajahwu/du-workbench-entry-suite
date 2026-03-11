@@ -1,0 +1,2 @@
+E-z20260107-007 Logger concept: sessions, asstes, entries, table.
+
